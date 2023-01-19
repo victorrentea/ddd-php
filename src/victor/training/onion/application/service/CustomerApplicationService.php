@@ -44,7 +44,7 @@ class CustomerApplicationService
     }
 
 
-    function registerCustomer(CustomerDto $customerDto)
+    function registerCustomer(CustomerDto $customerDto): CustomerDto
     {
         $customer = new Customer();
         $customer->setName($customerDto->getName());
