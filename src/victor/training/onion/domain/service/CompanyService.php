@@ -10,34 +10,15 @@ use victor\training\onion\infra\onrc\ONRCLegalEntityDto;
 
 readonly class CompanyService
 {
-    private ONRCApiClient $apiClient;
 
-    public function __construct(ONRCApiClient $apiClient)
+    public function __construct(private readonly ONRCClient $client)
     {
-        $this->apiClient = $apiClient;
     }
 
     public function placeCorporateOrder(string $cif): void
     {
-        $list = $this->apiClient->search(null, null, strtoupper($cif));
-        if (count($list) !== 1) {
-            throw new Exception('There is no single company matching CIF= ' . $cif);
-        }
+        $company = $this->client->fetchCompany($cif);
 
-        $dto = $list[0];
-
-        $name = $dto->getExtendedFullName() != null ? $dto->getExtendedFullName() : $dto->getShortName(); // ⚠️ data mapping mixed with biz logic
-        $company = new Company($name,
-            $dto->getMainEml(),
-            DateTimeImmutable::createFromMutable($dto->getRegistrationDate()),
-            $dto->getEuregno() ?? ("RO" . $dto->getOnrcId())
-        );
-
-        $this->deepDomainLogic($company);
-    }
-
-    private function deepDomainLogic(Company $company) // ⚠️ useless fields
-    {
         echo "send 'Thank you' email to " . $company->getEmail();  // ⚠️ bad attribute name
 
         if ($company->isYoung()) {
