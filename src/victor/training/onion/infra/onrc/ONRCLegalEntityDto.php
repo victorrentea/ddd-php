@@ -11,7 +11,7 @@ namespace victor\training\onion\infra\onrc;
 
 use DateTime;
 
-class ONRCLegalEntity
+class ONRCLegalEntityDto
 {
     private ?string $onrcId;
     private ?string $shortName;
@@ -28,7 +28,7 @@ class ONRCLegalEntity
         return $this->shortName;
     }
 
-    public function setShortName(string $shortName): ONRCLegalEntity
+    public function setShortName(string $shortName): ONRCLegalEntityDto
     {
         $this->shortName = $shortName;
         return $this;
@@ -39,7 +39,7 @@ class ONRCLegalEntity
         return $this->extendedFullName;
     }
 
-    public function setExtendedFullName(string $extendedFullName): ONRCLegalEntity
+    public function setExtendedFullName(string $extendedFullName): ONRCLegalEntityDto
     {
         $this->extendedFullName = $extendedFullName;
         return $this;
@@ -50,7 +50,7 @@ class ONRCLegalEntity
         return $this->registrationDate;
     }
 
-    public function setRegistrationDate(DateTime $registrationDate): ONRCLegalEntity
+    public function setRegistrationDate(DateTime $registrationDate): ONRCLegalEntityDto
     {
         $this->registrationDate = $registrationDate;
         return $this;
@@ -61,7 +61,7 @@ class ONRCLegalEntity
         return $this->onrcId;
     }
 
-    public function setOnrcId(string $onrcId): ONRCLegalEntity
+    public function setOnrcId(string $onrcId): ONRCLegalEntityDto
     {
         $this->onrcId = $onrcId;
         return $this;
@@ -77,7 +77,7 @@ class ONRCLegalEntity
 
     /**
      * @param mixed $mainEml
-     * @return ONRCLegalEntity
+     * @return ONRCLegalEntityDto
      */
     public function setMainEml($mainEml)
     {
@@ -95,9 +95,9 @@ class ONRCLegalEntity
 
     /**
      * @param ONRCLegalEntityContactEmail[] $emailAddresses
-     * @return ONRCLegalEntity
+     * @return ONRCLegalEntityDto
      */
-    public function setEmailAddresses(array $emailAddresses): ONRCLegalEntity
+    public function setEmailAddresses(array $emailAddresses): ONRCLegalEntityDto
     {
         $this->emailAddresses = $emailAddresses;
         return $this;

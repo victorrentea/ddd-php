@@ -2,12 +2,14 @@
 
 namespace victor\training\onion\application\dto;
 
-// JSON
+// JSON <=>
 class CustomerDto
 {
+    private int $id;
     private string $name;
     private string $email;
     private string $address;
+
 
     public function getName(): string
     {

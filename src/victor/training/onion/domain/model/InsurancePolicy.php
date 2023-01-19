@@ -2,6 +2,7 @@
 
 namespace victor\training\onion\domain\model;
 
+use Doctrine\ORM\Mapping\Embedded;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
@@ -13,6 +14,12 @@ class InsurancePolicy
     #[Id]
     #[GeneratedValue]
     private int $id;
+
+    #[Embedded]
+    private Fix $departure;
+
+//    private int $departureLatitude;
+//    private int $departureLongitude;
 
     #[ManyToOne]
     private Customer $customer;

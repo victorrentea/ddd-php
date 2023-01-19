@@ -10,7 +10,7 @@ namespace victor\training\onion\infra\onrc;
 
 class ONRCApiClient
 {
-    /* @return ONRCLegalEntity[] */
+    /* @return ONRCLegalEntityDto[] */
     public function search(?string $namePart, ?string $onrcId, ?string $cif) {
         // Imagine a remoote API Call happens here returning an array of responses
         return DummyData::getData();

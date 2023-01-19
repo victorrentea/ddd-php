@@ -11,16 +11,16 @@ namespace victor\training\onion\infra\onrc;
 
 class DummyData
 {
-    /* @return ONRCLegalEntity[] */
+    /* @return ONRCLegalEntityDto[] */
     public static function getData() {
-        $ldapUser1 = (new ONRCLegalEntity())
+        $ldapUser1 = (new ONRCLegalEntityDto())
             ->setShortName("John")
             ->setExtendedFullName("DOE")
             ->setOnrcId("jdoe")
             ->setRegistrationDate(new \DateTime())
             ->setMainEml("0123456789")
             ->setEmailAddresses(array(new ONRCLegalEntityContactEmail("WORK", ONRCLegalEntityContactEmailType::OFFICE)));
-        $ldapUser2 = (new ONRCLegalEntity())
+        $ldapUser2 = (new ONRCLegalEntityDto())
             ->setShortName("Jane")
             ->setExtendedFullName("DOE")
             ->setOnrcId("janedoe")
