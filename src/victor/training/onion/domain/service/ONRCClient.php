@@ -2,8 +2,10 @@
 
 namespace victor\training\onion\domain\service;
 
+use Exception;
 use Safe\DateTimeImmutable;
 use victor\training\onion\domain\model\Company;
+use victor\training\onion\infra\onrc\ONRCApiClient;
 
 class ONRCClient
 { // adapter peste api-ul onrc
@@ -11,6 +13,11 @@ class ONRCClient
 //class CompanyRepository - un repo scrie in DB MEU
 //class CompanyBuilder - fals. Un builder nu construieste el obiect ci ofera API de constructie catre restul codului. face api call extern
 //class ONRCAdapter { // aka "client"
+
+
+    public function __construct(private readonly ONRCApiClient $apiClient)
+    {
+    }
 
     public function fetchCompany(string $cif): Company
     {

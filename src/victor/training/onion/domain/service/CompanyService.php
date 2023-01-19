@@ -3,10 +3,7 @@
 namespace victor\training\onion\domain\service;
 
 use Exception;
-use Safe\DateTimeImmutable;
 use victor\training\onion\domain\model\Company;
-use victor\training\onion\infra\onrc\ONRCApiClient;
-use victor\training\onion\infra\onrc\ONRCLegalEntityDto;
 
 readonly class CompanyService
 {
