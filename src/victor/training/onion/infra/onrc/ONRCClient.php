@@ -1,13 +1,13 @@
 <?php
 
-namespace victor\training\onion\domain\service;
+namespace victor\training\onion\infra\onrc;
 
 use Exception;
 use Safe\DateTimeImmutable;
 use victor\training\onion\domain\model\Company;
-use victor\training\onion\infra\onrc\ONRCApiClient;
+use victor\training\onion\domain\service\ONRCClientInterface;
 
-class ONRCClient
+class ONRCClient implements ONRCClientInterface
 { // adapter peste api-ul onrc
 //class CompanyFactory - a la Craiova
 //class CompanyRepository - un repo scrie in DB MEU

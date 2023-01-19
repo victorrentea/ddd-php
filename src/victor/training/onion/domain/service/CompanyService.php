@@ -8,7 +8,7 @@ use victor\training\onion\domain\model\Company;
 readonly class CompanyService
 {
 
-    public function __construct(private readonly ONRCClient $client)
+    public function __construct(private readonly ONRCClientInterface $client)
     {
     }
 
