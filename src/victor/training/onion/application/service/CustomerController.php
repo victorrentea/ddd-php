@@ -15,16 +15,15 @@ use victor\training\onion\application\dto\CustomerSearchResult;
 use victor\training\onion\domain\model\Customer;
 use victor\training\onion\domain\repo\CustomerRepo;
 use victor\training\onion\domain\service\InsuranceService;
+use victor\training\onion\domain\service\RegisterCustomerService;
 
-class CustomerApplicationService
+class CustomerController
 {
-    private CustomerRepo $customerRepository;
-    private InsuranceService $insuranceService;
-
-    public function __construct(CustomerRepo $customerRepository, \victor\training\onion\domain\service\InsuranceService $insuranceService)
+    public function __construct(private CustomerRepo $customerRepository,
+                                private InsuranceService $insuranceService,
+        private RegisterCustomerService $registerCustomerService
+    )
     {
-        $this->customerRepository = $customerRepository;
-        $this->insuranceService = $insuranceService;
     }
 
     /** @return CustomerSearchResult[] */
@@ -33,16 +32,20 @@ class CustomerApplicationService
         return $this->customerRepository->search($searchCriteria);
     }
 
+
+
     function getCustomerById(int $customerId): CustomerDto
     {
         $customer = $this->customerRepository->findById($customerId);
-        $dto = new CustomerDto();
-        $dto->setName($customer->getName());
-        $dto->setEmail($customer->getEmail());
-        $dto->setAddress($customer->getAddress());
+
+//        $dto = $customer->toDto(); // NU incalci Dependecy Rule: cuplezi ce-ai mai sfant (Domain Modelul) cu API concerns
+
+        $dto = new Customer($customer);
+         // sau :
+//        $dto = CustomerDto::fromCustomer($customer);
+
         return $dto;
     }
-
 
     function registerCustomer(CustomerDto $customerDto): CustomerDto
     {
@@ -55,18 +58,8 @@ class CustomerApplicationService
             throw new \Exception("Bum");
         }
 
-        // business logic
-        // business logic
-        // business logic
-        // business logic
-        $discountPercentage = 3;
-        if ($customer->isGenius()) {
-            $discountPercentage = 4;
-        }
-        echo "Biz logic with $discountPercentage";
-        // business logic
-        // business logic
-        // business logic
+        $this->registerCustomerService->register($customer);
+//        $customer->register();
 
         $this->insuranceService->requoteCustomer($customer);
     }

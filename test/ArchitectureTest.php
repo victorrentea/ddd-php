@@ -23,4 +23,25 @@ class ArchitectureTest extends \PHPUnit\Framework\TestCase
             // ->validate(new MustOnlyDependOn('App\\Mailing', 'PHPMailer\\PHPMailer'))
             ->assertHasNoErrors();
     }
+    public function testNoDtosEnterDomain()
+    {
+        $directory = __DIR__ . '/../src/victor';
+        echo "Reading from $directory";
+        (new PhpArch())
+            ->fromDirectory($directory)
+            ->validate(new ForbiddenDependency('victor\\training\\onion\\domain\\', 'victor\\training\\onion\\application\\'))
+            ->assertHasNoErrors();
+    }
+
+
+    # [Route ('/api/reservation-in-reception/{reservationInReceptionId]',name: 'reservation_in_reception_cancel', methods: ['DELETE'])]
+//    #[IsGranted ('ROLE_MARS_REQUEST_EDIT' )]
+//    public function cancel(
+//        ReservationInReceptionCancelDto $reservationInReceptionCancelDto,
+//        ReservationInReceptionCancelModel $cancelRequestModel
+//    ) : JsonResponse
+//    {
+//        $cancelRequestModel->cancel($reservationInReceptionCancelDto);
+//        return new JsonResponse((new ApiResponseDto())->serialize());
+//    }
 }

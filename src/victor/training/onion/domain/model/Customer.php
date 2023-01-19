@@ -17,11 +17,19 @@ class Customer
     private string $address;
     private bool $genius;
 
+    public function __construct(Customer $customer)
+    {
+        $this->name = $customer->getName();
+        $this->email = $customer->getEmail();
+        $this->address = $customer->getAddress();
+    }
+
 
     public function getId(): int
     {
         return $this->id;
     }
+
     public function getName(): string
     {
         return $this->name;
@@ -66,6 +74,14 @@ class Customer
         return $this;
     }
 
+    public function getDiscountPercentage(): int
+    {
+        $result = 3;
+        if ($this->genius) {
+            $result = 4;
+        }
+        return $result;
+    }
 
 
 }
