@@ -3,6 +3,8 @@
 namespace victor\training\onion\domain\service;
 
 use Exception;
+use Safe\DateTimeImmutable;
+use victor\training\onion\domain\model\Company;
 use victor\training\onion\infra\onrc\ONRCApiClient;
 use victor\training\onion\infra\onrc\ONRCLegalEntityDto;
 
@@ -22,39 +24,36 @@ readonly class CompanyService
             throw new Exception('There is no single company matching CIF= ' . $cif);
         }
 
-        $onrcle = $list[0];
+        $dto = $list[0];
 
-        $this->deepDomainLogic($onrcle);
+        $name = $dto->getExtendedFullName() != null ? $dto->getExtendedFullName() : $dto->getShortName(); // ⚠️ data mapping mixed with biz logic
+        $company = new Company($name,
+            $dto->getMainEml(),
+            DateTimeImmutable::createFromMutable($dto->getRegistrationDate()),
+            $dto->getEuregno() ?? ("RO" . $dto->getOnrcId())
+        );
+
+        $this->deepDomainLogic($company);
     }
 
-    private function deepDomainLogic(ONRCLegalEntityDto $dto) // ⚠️ useless fields
+    private function deepDomainLogic(Company $company) // ⚠️ useless fields
     {
-        echo "send 'Thank you' email to " . $dto->getMainEml();  // ⚠️ bad attribute name
+        echo "send 'Thank you' email to " . $company->getEmail();  // ⚠️ bad attribute name
 
-        $year = $dto->getRegistrationDate()->format('Y');  // ⚠️ pending NullPointerException
-        if (date('Y') - $year < 2) {
+        if ($company->isYoung()) {
             throw new Exception("Company too young");
         }
 
         // temporal coupling: daca inversezi cele 2 linii de mai jos iti iei bug fara macar sa banuiesti
         // problemele datelor mutabile: codu nu iti exprima dependenta de date
-        $this->innocentHack($dto);
-        $this->deeper($dto);
+        $this->deeper($company);
 
-        $name = $dto->getExtendedFullName() != null ? $dto->getExtendedFullName() : $dto->getShortName(); // ⚠️ data mapping mixed with biz logic
-        echo "set order placed by $name";
+        echo "set order placed by {$company->getName()}";
     }
 
-    private function innocentHack(ONRCLegalEntityDto $dto): void
-    {
-        if ($dto->getEuregno() == null) {
-            $dto->setEuregno("RO" . $dto->getOnrcId()); // ⚠️ mutability risks
-        }
-    }
 
-    private function deeper(ONRCLegalEntityDto $dto) // ⚠️ useless fields
+    private function deeper(Company $company) // ⚠️ useless fields
     {
-        $name = $dto->getExtendedFullName() != null ? $dto->getExtendedFullName() : $dto->getShortName(); // ⚠️ repeated logic
-        echo "set shipped to $name, having EU reg: " . $dto->getEuregno();
+        echo "set shipped to {$company->getName()}, having EU reg: " . $company->getEuropeanRegistrationNumber();
     }
 }
