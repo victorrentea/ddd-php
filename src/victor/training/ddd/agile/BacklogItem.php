@@ -7,6 +7,7 @@ namespace victor\training\ddd\agile;
 
 use Exception;
 
+#[Entity] // draga colegu', nu modifica direct starea clasei asteia ci dute-n AggregRoot.
 class BacklogItem
 {
     const STATUS_CREATED = 'CREATED';
@@ -26,6 +27,7 @@ class BacklogItem
 
     private int $version; // for optimistic locking
 
+    /** @deprecated nu o folosi in codul de service, ci e doar pentru tata Sprint (AggRoot) */
     public function addHours(int $hours): void
     {
         if ($this->status !== BacklogItem::STATUS_STARTED) {

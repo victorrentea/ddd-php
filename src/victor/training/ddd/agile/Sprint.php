@@ -8,9 +8,10 @@ use DateTime;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\Version;
 use Exception;
 
-
+#[AggregateRoot]
 class Sprint
 {
     const STATUS_CREATED = 'CREATED';
@@ -25,6 +26,9 @@ class Sprint
     private ?DateTime $startDate;
     private DateTime $plannedEnd;
     private ?DateTime $endDate;
+
+    #[Version] // optimistic locking
+    private int $version;
 
     private string $status = self::STATUS_CREATED;
 
