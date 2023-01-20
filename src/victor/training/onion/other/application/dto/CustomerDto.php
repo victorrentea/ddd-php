@@ -1,6 +1,6 @@
 <?php
 
-namespace victor\training\onion\application\dto;
+namespace victor\training\onion\other\application\dto;
 
 // JSON <=>
 class CustomerDto

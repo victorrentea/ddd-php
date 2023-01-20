@@ -6,16 +6,16 @@
  * Time: 12:44 PM
  */
 
-namespace victor\training\onion\application\service;
+namespace victor\training\onion\other\application\service;
 
 
-use victor\training\onion\application\dto\CustomerDto;
-use victor\training\onion\application\dto\CustomerSearchCriteria;
-use victor\training\onion\application\dto\CustomerSearchResult;
-use victor\training\onion\domain\model\Customer;
-use victor\training\onion\domain\repo\CustomerRepo;
-use victor\training\onion\domain\service\InsuranceService;
-use victor\training\onion\domain\service\RegisterCustomerService;
+use victor\training\onion\other\application\dto\CustomerDto;
+use victor\training\onion\other\application\dto\CustomerSearchCriteria;
+use victor\training\onion\other\application\dto\CustomerSearchResult;
+use victor\training\onion\other\domain\model\Customer;
+use victor\training\onion\other\domain\repo\CustomerRepo;
+use victor\training\onion\other\domain\service\InsuranceService;
+use victor\training\onion\other\domain\service\RegisterCustomerService;
 
 class CustomerApplicationService
 {

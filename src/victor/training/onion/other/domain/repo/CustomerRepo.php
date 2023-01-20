@@ -6,12 +6,12 @@
  * Time: 12:42 PM
  */
 
-namespace victor\training\onion\domain\repo;
+namespace victor\training\onion\other\domain\repo;
 
 
-use victor\training\onion\application\dto\CustomerSearchCriteria;
-use victor\training\onion\application\dto\CustomerSearchResult;
-use victor\training\onion\domain\model\Customer;
+use victor\training\onion\other\application\dto\CustomerSearchCriteria;
+use victor\training\onion\other\application\dto\CustomerSearchResult;
+use victor\training\onion\other\domain\model\Customer;
 
 interface CustomerRepo
 {

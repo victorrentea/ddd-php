@@ -1,9 +1,9 @@
 <?php
 
-namespace victor\training\onion\domain\service;
+namespace victor\training\onion\other\domain\service;
 
 use Exception;
-use victor\training\onion\domain\model\Company;
+use victor\training\onion\other\domain\model\Company;
 
 readonly class CompanyService
 {

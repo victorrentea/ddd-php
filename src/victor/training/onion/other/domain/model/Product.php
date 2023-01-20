@@ -1,6 +1,8 @@
 <?php
 
-namespace victor\training\onion\domain\model;
+namespace victor\training\onion\other\domain\model;
+
+use victor\training\onion\domain\model\ProductType;
 
 class Product
 {

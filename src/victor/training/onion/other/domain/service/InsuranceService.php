@@ -1,11 +1,11 @@
 <?php
 
-namespace victor\training\onion\domain\service;
+namespace victor\training\onion\other\domain\service;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use victor\training\onion\domain\model\Customer;
-use victor\training\onion\domain\repo\CustomerRepo;
-use victor\training\onion\domain\repo\InsurancePolicyRepo;
+use victor\training\onion\other\domain\model\Customer;
+use victor\training\onion\other\domain\repo\CustomerRepo;
+use victor\training\onion\other\domain\repo\InsurancePolicyRepo;
 
 class InsuranceService
 {

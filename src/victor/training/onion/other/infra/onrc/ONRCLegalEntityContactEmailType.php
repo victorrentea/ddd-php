@@ -1,6 +1,6 @@
 <?php
 
-namespace victor\training\onion\infra\onrc;
+namespace victor\training\onion\other\infra\onrc;
 
 enum ONRCLegalEntityContactEmailType
 {

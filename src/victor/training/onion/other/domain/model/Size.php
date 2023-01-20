@@ -1,6 +1,6 @@
 <?php
 
-namespace victor\training\onion\domain\model;
+namespace victor\training\onion\other\domain\model;
 
 //ValueObject
 // - mic

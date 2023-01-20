@@ -6,7 +6,7 @@
  * Time: 10:35 PM
  */
 
-namespace victor\training\onion\infra\onrc;
+namespace victor\training\onion\other\infra\onrc;
 
 class ONRCApiClient
 {

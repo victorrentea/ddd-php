@@ -1,12 +1,13 @@
 <?php
 
-namespace victor\training\onion\domain\model;
+namespace victor\training\onion\other\domain\model;
 
 use Doctrine\ORM\Mapping\Embedded;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
+use victor\training\onion\domain\model\Fix;
 
 #[Entity]
 class InsurancePolicy
