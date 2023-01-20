@@ -4,12 +4,24 @@ namespace victor\training\ddd\agile;
 
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use victor\training\ddd\agile\events\AllItemsDoneBeforeSprintEndEvent;
+
+//#[AsEventListener(AllItemsDoneBeforeSprintEndEvent::class, 'handle')]
+//class AllItemsDoneBeforeSprintEndEventListener {
+//
+//    public function handle(AllItemsDoneBeforeSprintEndEvent $event): iterable
+//    {
+//        $event
+//    }
+//}
 
 class SendEmailAdapter implements NotificationService
 {
-    public function __construct(EventDispatcherInterface $dispatcher,
-    private readonly SprintRepo $sprintRepo  )
+    public function __construct(
+        EventDispatcherInterface $dispatcher,
+             private readonly SprintRepo $sprintRepo  )
     {
         $dispatcher->addListener(AllItemsDoneBeforeSprintEndEvent::class, [$this, 'onAllItemsDoneBeforeSprintEndEvent']);
     }

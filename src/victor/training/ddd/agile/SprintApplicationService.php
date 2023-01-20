@@ -5,14 +5,18 @@ namespace victor\training\ddd\agile;
 
 use DateTime;
 use Exception;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use victor\training\ddd\agile\dto\AddBacklogItemRequest;
 use victor\training\ddd\agile\dto\LogHoursRequest;
 use victor\training\ddd\agile\dto\SprintDto;
+use victor\training\ddd\agile\events\AllItemsDoneBeforeSprintEndEvent;
 
 
 class SprintApplicationService
 {
-    public function __construct(private readonly SprintRepo          $sprintRepo,
+    public function __construct(
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly SprintRepo          $sprintRepo,
                                 private readonly ProductRepo         $productRepo,
                                 private readonly BacklogItemRepo     $backlogItemRepo,
                                 private readonly SprintItemRepo      $sprintItemRepo,
@@ -83,6 +87,7 @@ class SprintApplicationService
         $sprint->completeItem($sprintItemId);
         $this->sprintRepo->save($sprint);
 
+
         // ###1 Event aruncat de catre save() printr-un hook de ORM care te anunta cand a rulat INSERTul cu succes in DB
         //   ( Mai bine decat Event aruncat din completeItem NU pt ca poata crapa save() dupa )
         //   AM NOROC ca vreau fire-and-forget => merge eventuri
@@ -96,10 +101,14 @@ class SprintApplicationService
         // ###3
 //        $sprint->completeItem($sprintItemId);
 
+        if ($sprint->allItemsDone()/* && date() - $this->endDate >= 1zi*/) {
+            $this->dispatcher ->dispatch(new AllItemsDoneBeforeSprintEndEvent($this->id));
+
+        }
+
         // DE CE OOP:
         // TOCMAI AM GASIT pe obiectul din fata mea (din Domain Model) o functie convenient => Reuse si nu copy paste.
         // fata de a cauta intr-un <Sprint> Util/Helper
     }
 
 }
-
