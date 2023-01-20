@@ -2,24 +2,6 @@
 
 namespace victor\training\ddd\agile;
 
-interface BacklogItemRepo
-{
-    function save(BacklogItem $backlogItem): BacklogItem;
-
-    public function findOneById(int $id): BacklogItem;
-
-    public function deleteById(int $id): void;
-}
-
-class BacklogItemDto
-{
-    public int $id;
-    public int $productId;
-    public string $title;
-    public string $description;
-    public int $version;
-}
-
 class BacklogItemService
 {
     private BacklogItemRepo $backlogItemRepo;
@@ -34,7 +16,7 @@ class BacklogItemService
     public function createBacklogItem(BacklogItemDto $dto): int
     {
         $product = $this->productRepo->findOneById($dto->productId);
-        $backlogItem = (new BacklogItem())
+        $backlogItem = (new BacklogItem($product, $dto->title, $dto->description))
             ->setProduct($product)
             ->setDescription($dto->description)
             ->setTitle($dto->title);

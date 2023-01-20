@@ -3,22 +3,24 @@
 namespace victor\training\ddd\agile;
 
 
-use Cassandra\Date;
 use DateTime;
-use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Version;
 use Exception;
+use victor\training\ddd\agile\ddd\DDDAggregateRoot;
 
-#[AggregateRoot]
+#[DDDAggregateRoot]
+#[Entity]
 class Sprint
 {
     const STATUS_CREATED = 'CREATED';
     const STATUS_STARTED = 'STARTED';
     const STATUS_FINISHED = 'FINISHED';
 
-    private ?int $id;
+    #[Id]
+    private int $id;
     private int $iteration;
     #[ManyToOne]
     private Product $product;
@@ -33,7 +35,7 @@ class Sprint
     private string $status = self::STATUS_CREATED;
 
     #[OneToMany(cascade: ['all'] )]
-   /** @var BacklogItem[] */
+   /** @var SprintItem[] */
    private array $items = [];
 
     public function __construct(Product $product, DateTime $plannedEnd)
@@ -109,9 +111,12 @@ class Sprint
         return $this;
     }
 
-    public function addItem(BacklogItem $backlogItem): void
+    public function addItem(int $backlogId, int $fpEstimate): void
     {
-        $this->items [] = $backlogItem;
+        if ($this->status != Sprint::STATUS_CREATED) {
+            throw new Exception("Can only add items to Sprint before it starts");
+        }
+        $this->items [] = new SprintItem($this->id, $backlogId, $fpEstimate);
     }
 
     public function start(): void
@@ -148,32 +153,32 @@ class Sprint
         return $notDoneItems;
     }
 
-    public function startItem(int $backlogId): void
+    public function startItem(int $sprintItemId): void
     {
-        $backlogItem = $this->findItemById($backlogId);
+        $backlogItem = $this->findItemById($sprintItemId);
         $this->assertStarted();
         $backlogItem->start();
     }
 
-    public function completeItem(int $backlogId): void
+    public function completeItem(int $sprintItemId): void
     {
-        $backlogItem = $this->findItemById($backlogId);
+        $backlogItem = $this->findItemById($sprintItemId);
         $this->assertStarted();
         $backlogItem->complete();
     }
-    public function logHoursOnItem(int $backlogId, int $hours): void
+    public function logHoursOnItem(int $sprintItemId, int $hours): void
     {
-        $backlogItem = $this->findItemById($backlogId);
+        $backlogItem = $this->findItemById($sprintItemId);
         $this->assertStarted();
         $backlogItem->addHours($hours);
     }
 
-    private function findItemById(int $backlogId): BacklogItem
+    private function findItemById(int $sprintItemId): BacklogItem
     {
         foreach ($this->items as $item) {
-            if ($item->getId() === $backlogId) return $item;
+            if ($item->getId() === $sprintItemId) return $item;
         }
-        throw new Exception("Nu-i $backlogId");
+        throw new Exception("Nu-i $sprintItemId");
     }
 
     public function assertStarted(): void

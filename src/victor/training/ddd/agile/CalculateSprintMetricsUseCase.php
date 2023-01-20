@@ -25,7 +25,7 @@ class CalculateSprintMetricsUseCase
         $dto->calendarDays = $sprint->getEndDate()->diff($sprint->getStartDate())->days;
         $dto->doneFP = 0;
         foreach ($sprint->getItems() as $item) {
-            if ($item->getStatus() === BacklogItem::STATUS_DONE) {
+            if ($item->getStatus() === SprintItem::STATUS_DONE) {
                 $dto->doneFP += $item->getFpEstimation();
             }
         }
@@ -33,7 +33,7 @@ class CalculateSprintMetricsUseCase
 
         $dto->hoursConsumedForNotDone = 0;
         foreach ($sprint->getItems() as $item) {
-            if ($item->getStatus() !== BacklogItem::STATUS_DONE) {
+            if ($item->getStatus() !== SprintItem::STATUS_DONE) {
                 $dto->hoursConsumedForNotDone += $item->getHoursConsumed();
             }
         }

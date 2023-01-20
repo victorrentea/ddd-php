@@ -5,35 +5,31 @@ namespace victor\training\ddd\agile;
 
 
 
+use Doctrine\ORM\Mapping\Entity;
 use Exception;
+use victor\training\ddd\agile\ddd\DDDEntity;
 
-#[Entity] // draga colegu', nu modifica direct starea clasei asteia ci dute-n AggregRoot.
+#[DDDEntity] // draga colegu', nu modifica direct starea clasei asteia ci dute-n AggregRoot.
+#[Entity]
 class BacklogItem
 {
-    const STATUS_CREATED = 'CREATED';
-    const STATUS_STARTED = 'STARTED';
-    const STATUS_DONE = 'DONE';
 
     private int $id;
+    // nu e necesar pt ca nici un UC nu cere copilului sa se duca in parinte
+//    #[OneToMany]
     private Product $product;
+//    private int $productId;
+
     private string $title;
     private string $description;
-    private string $status = self::STATUS_CREATED;
-
-
-    private Sprint $sprint; // ⚠ not NULL when assigned to a sprint
-    private int $fpEstimation; // ⚠ not NULL when assigned to a sprint
-    private int $hoursConsumed; // ⚠ not NULL when assigned to a sprint
 
     private int $version; // for optimistic locking
 
-    /** @deprecated nu o folosi in codul de service, ci e doar pentru tata Sprint (AggRoot) */
-    public function addHours(int $hours): void
+    public function __construct(Product $product, string $title, string $description)
     {
-        if ($this->status !== BacklogItem::STATUS_STARTED) {
-            throw new Exception("Item not started");
-        }
-        $this->hoursConsumed += $hours;
+        $this->product = $product;
+        $this->title = $title;
+        $this->description = $description;
     }
 
     public function getId(): int
@@ -80,51 +76,6 @@ class BacklogItem
         return $this;
     }
 
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    // #respect ai reusit sa incapsulezi complet modificarile pe campul status
-//    public function setStatus(string $status): BacklogItem
-//    {
-//        $this->status = $status;
-//        return $this;
-//    }
-
-    public function getSprint(): Sprint
-    {
-        return $this->sprint;
-    }
-
-    public function setSprint(Sprint $sprint): BacklogItem
-    {
-        $this->sprint = $sprint;
-        return $this;
-    }
-
-    public function getFpEstimation(): int
-    {
-        return $this->fpEstimation;
-    }
-
-    public function setFpEstimation(int $fpEstimation): BacklogItem
-    {
-        $this->fpEstimation = $fpEstimation;
-        return $this;
-    }
-
-    public function getHoursConsumed(): int
-    {
-        return $this->hoursConsumed;
-    }
-
-    public function setHoursConsumed(int $hoursConsumed): BacklogItem
-    {
-        $this->hoursConsumed = $hoursConsumed;
-        return $this;
-    }
-
     public function getVersion(): int
     {
         return $this->version;
@@ -134,21 +85,5 @@ class BacklogItem
     {
         $this->version = $version;
         return $this;
-    }
-
-    public function start(): void
-    {
-        if ($this->status != BacklogItem::STATUS_CREATED) {
-            throw new Exception("Item already started");
-        }
-        $this->status = BacklogItem::STATUS_STARTED;
-    }
-
-    public function complete(): void
-    {
-        if ($this->status != BacklogItem::STATUS_STARTED) {
-            throw new Exception("Cannot complete an Item before starting it");
-        }
-        $this->status=  BacklogItem::STATUS_DONE;
     }
 }

@@ -8,7 +8,6 @@ use Exception;
 use victor\training\ddd\agile\dto\AddBacklogItemRequest;
 use victor\training\ddd\agile\dto\LogHoursRequest;
 use victor\training\ddd\agile\dto\SprintDto;
-use victor\training\ddd\agile\dto\SprintMetricsDto;
 
 
 class SprintService
@@ -16,6 +15,7 @@ class SprintService
     public function __construct(private readonly SprintRepo         $sprintRepo,
                                 private readonly ProductRepo        $productRepo,
                                 private readonly BacklogItemRepo    $backlogItemRepo,
+                                private readonly SprintItemRepo     $sprintItemRepo,
                                 private readonly EmailService       $emailService,
                                 private readonly MailingListService $mailingListService
     )
@@ -54,28 +54,20 @@ class SprintService
 
     public function addItem(int $sprintId, AddBacklogItemRequest $request): void
     {
-        $backlogItem = $this->backlogItemRepo->findOneById($request->backlogId);
         $sprint = $this->sprintRepo->findOneById($sprintId);
-        if ($sprint->getStatus() != Sprint::STATUS_CREATED) {
-            throw new Exception("Can only add items to Sprint before it starts");
-        }
-        $backlogItem->setSprint($sprint);
-        $sprint->addItem($backlogItem);
-        $backlogItem->setFpEstimation($request->fpEstimation);
+        $sprint->addItem($request->backlogId, $request->fpEstimation);
+        $this->sprintRepo->save($sprint);
     }
 
-
-    public function startItem(int $sprintId, int $backlogId): void
+    public function startItem(int $sprintId, int $sprintItemId): void
     {
-//        $this->backlogItemRepo->findOneById($backlogId)->addHours(-1);
-
         // i have a dream:
         $sprint = $this->sprintRepo->findOneById($sprintId);
-        $sprint->startItem($backlogId);
+        $sprint->startItem($sprintItemId);
         $this->sprintRepo->save($sprint); //#1 curat cascade: si automat doctrine salveaza toti copii (si cel nou)
 
         // daca vrei performanta poti sa faci startItem sa intoarca itemul de salvat -> itemRepo,save()
-//      $this->backlogItemRepo->save( $sprint->findItemById($backlogId));
+//      $this->backlogItemRepo->save( $sprint->findItemById($sprintItemId));
     }
 
     public function logHours(int $sprintId, LogHoursRequest $request): void
@@ -85,15 +77,15 @@ class SprintService
         $this->sprintRepo->save($sprint);
     }
 
-    public function completeItem(int $sprintId, int $backlogId): void
+    public function completeItem(int $sprintId, int $sprintItemId): void
     {
         $sprint = $this->sprintRepo->findOneById($sprintId);
-        $sprint->completeItem($backlogId);
+        $sprint->completeItem($sprintItemId);
         $this->sprintRepo->save($sprint);
 
         $allDone = true;
         foreach ($sprint->getItems() as $backlogItem) {
-            if ($backlogItem->getStatus() !== BacklogItem::STATUS_DONE) {
+            if ($backlogItem->getStatus() !== SprintItem::STATUS_DONE) {
                 $allDone = false;
                 break;
             }
