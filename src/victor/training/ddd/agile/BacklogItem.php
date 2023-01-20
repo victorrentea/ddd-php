@@ -5,6 +5,8 @@ namespace victor\training\ddd\agile;
 
 
 
+use Exception;
+
 class BacklogItem
 {
     const STATUS_CREATED = 'CREATED';
@@ -126,5 +128,13 @@ class BacklogItem
     {
         $this->version = $version;
         return $this;
+    }
+
+    public function start()
+    {
+        if ($this->status != BacklogItem::STATUS_CREATED) {
+            throw new Exception("Item already started");
+        }
+        $this->status = BacklogItem::STATUS_STARTED;
     }
 }

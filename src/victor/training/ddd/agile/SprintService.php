@@ -8,7 +8,7 @@ use Exception;
 use victor\training\ddd\agile\dto\AddBacklogItemRequest;
 use victor\training\ddd\agile\dto\LogHoursRequest;
 use victor\training\ddd\agile\dto\SprintDto;
-use victor\training\ddd\agile\dto\SprintMetrics;
+use victor\training\ddd\agile\dto\SprintMetricsDto;
 
 
 class SprintService
@@ -52,41 +52,6 @@ class SprintService
         $this->sprintRepo->save($sprint);
     }
 
-    public function getSprintMetrics(int $id): SprintMetrics
-    {
-        $sprint = $this->sprintRepo->findOneById($id);
-        if ($sprint->getStatus() !== Sprint::STATUS_FINISHED) {
-            throw new Exception("Illegal state");
-        }
-        $dto = new SprintMetrics();
-        $dto->consumedHours = 0;
-        foreach ($sprint->getItems() as $backlogItem) {
-            $dto->consumedHours += $backlogItem->getHoursConsumed();
-        }
-
-        $dto->calendarDays = $sprint->getEndDate()->diff($sprint->getStartDate())->days;
-        $dto->doneFP = 0;
-        foreach ($sprint->getItems() as $item) {
-            if ($item->getStatus() === BacklogItem::STATUS_DONE) {
-                $dto->doneFP += $item->getFpEstimation();
-            }
-        }
-        $dto->fpVelocity = 1.0 * $dto->doneFP / $dto->consumedHours;
-
-        $dto->hoursConsumedForNotDone = 0;
-        foreach ($sprint->getItems() as $item) {
-            if ($item->getStatus() !== BacklogItem::STATUS_DONE) {
-                $dto->hoursConsumedForNotDone += $item->getHoursConsumed();
-            }
-        }
-
-        if ($sprint->getEndDate()->getTimestamp() > $sprint->getPlannedEnd()->getTimestamp()) {
-            $dto->delayDays = $sprint->getEndDate()->diff($sprint->getPlannedEnd())->days;
-        }
-        return $dto;
-    }
-
-
     public function addItem(int $sprintId, AddBacklogItemRequest $request): void
     {
         $backlogItem = $this->backlogItemRepo->findOneById($request->backlogId);
@@ -100,23 +65,25 @@ class SprintService
     }
 
 
-    public function startItem(int $id, int $backlogId): void
+    public function startItem(int $sprintId, int $backlogId): void
     {
-        $backlogItem = $this->backlogItemRepo->findOneById($backlogId);
-        $this->checkSprintMatchesAndStarted($id, $backlogItem);
-        if ($backlogItem->getStatus() != BacklogItem::STATUS_CREATED) {
-            throw new Exception("Item already started");
-        }
-        $backlogItem->setStatus(BacklogItem::STATUS_STARTED);
+
+        // i have a dream:
+        $sprint = $this->sprintRepo->findOneById($sprintId);
+        $sprint->startItem($backlogId);
+        $this->sprintRepo->save($sprint); //#1 curat cascade: si automat doctrine salveaza toti copii (si cel nou)
+
+        // daca vrei performanta poti sa faci startItem sa intoarca itemul de salvat -> itemRepo,save()
+//      $this->backlogItemRepo->save( $sprint->startItem($backlogId));
     }
 
-    private function checkSprintMatchesAndStarted(int $id, BacklogItem $backlogItem): void
+    private function checkSprintMatchesAndStarted(int $sprintId, BacklogItem $backlogItem): void
     {
-        if ($backlogItem->getSprint()->getId() !== $id) {
+        if ($backlogItem->getSprint()->getId() !== $sprintId) {
             throw new Exception("item not in sprint");
         }
 
-        $sprint = $this->sprintRepo->findOneById($id);
+        $sprint = $this->sprintRepo->findOneById($sprintId);
         if ($sprint->getStatus() != Sprint::STATUS_STARTED) {
             throw new Exception("Sprint not started");
         }

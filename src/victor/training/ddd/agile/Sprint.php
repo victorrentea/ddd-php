@@ -7,6 +7,7 @@ use Cassandra\Date;
 use DateTime;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
 use Exception;
 
 
@@ -27,6 +28,7 @@ class Sprint
 
     private string $status = self::STATUS_CREATED;
 
+    #[OneToMany(cascade: ['all'] )]
    /** @var BacklogItem[] */
    private array $items = [];
 
@@ -140,5 +142,27 @@ class Sprint
             }
         }
         return $notDoneItems;
+    }
+
+    public function startItem(int $backlogId): void
+    {
+        $backlogItem = $this->findItemById($backlogId);
+        $this->assertStarted();
+        $backlogItem->start();
+    }
+
+    private function findItemById(int $backlogId)
+    {
+        foreach ($this->items as $item) {
+            if ($item->getId() === $backlogId) return $item;
+        }
+        throw new Exception("Nu-i $backlogId");
+    }
+
+    public function assertStarted(): void
+    {
+        if ($this->status != Sprint::STATUS_STARTED) {
+            throw new Exception("Sprint not started");
+        }
     }
 }

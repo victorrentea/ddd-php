@@ -2,7 +2,7 @@
 
 namespace victor\training\ddd\agile\dto;
 
-class SprintMetrics
+class SprintMetricsDto
 {
     public int $consumedHours;
     public int $doneFP;
