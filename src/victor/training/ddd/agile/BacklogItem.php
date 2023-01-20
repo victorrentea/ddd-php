@@ -83,11 +83,12 @@ class BacklogItem
         return $this->status;
     }
 
-    public function setStatus(string $status): BacklogItem
-    {
-        $this->status = $status;
-        return $this;
-    }
+    // #respect ai reusit sa incapsulezi complet modificarile pe campul status
+//    public function setStatus(string $status): BacklogItem
+//    {
+//        $this->status = $status;
+//        return $this;
+//    }
 
     public function getSprint(): Sprint
     {

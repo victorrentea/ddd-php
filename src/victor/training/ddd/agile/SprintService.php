@@ -76,6 +76,13 @@ class SprintService
 //      $this->backlogItemRepo->save( $sprint->findItemById($backlogId));
     }
 
+    public function logHours(int $sprintId, LogHoursRequest $request): void
+    {
+        $sprint = $this->sprintRepo->findOneById($sprintId);
+        $sprint->logHoursOnItem($request->backlogId, $request->hours);
+        $this->sprintRepo->save($sprint);
+    }
+
     public function completeItem(int $sprintId, int $backlogId): void
     {
         $sprint = $this->sprintRepo->findOneById($sprintId);
@@ -94,13 +101,6 @@ class SprintService
             $emails = $this->mailingListService->retrieveEmails($sprint->getProduct()->getTeamMailingList());
             $this->emailService->sendCongratsEmail($emails);
         }
-    }
-
-    public function logHours(int $sprintId, LogHoursRequest $request): void
-    {
-        $sprint = $this->sprintRepo->findOneById($sprintId);
-        $sprint->logHoursOnItem($request->backlogId, $request->hours);
-        $this->sprintRepo->save($sprint);
     }
 
 }
