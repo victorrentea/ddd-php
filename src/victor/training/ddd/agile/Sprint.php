@@ -3,8 +3,11 @@
 namespace victor\training\ddd\agile;
 
 
+use Cassandra\Date;
 use DateTime;
+use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Exception;
 
 
 class Sprint
@@ -17,18 +20,21 @@ class Sprint
     private int $iteration;
     #[ManyToOne]
     private Product $product;
-    private ?DateTime $start;
+//    #[Column]
+    private ?DateTime $startDate;
     private DateTime $plannedEnd;
-    private ?DateTime $end;
+    private ?DateTime $endDate;
 
     private string $status = self::STATUS_CREATED;
 
    /** @var BacklogItem[] */
    private array $items = [];
 
-    public function __construct(Product $product)
+    public function __construct(Product $product, DateTime $plannedEnd)
     {
         $this->product = $product;
+        $this->iteration = $product->incrementAndGetIteration();
+        $this->plannedEnd = $plannedEnd;
     }
 
 
@@ -45,27 +51,19 @@ class Sprint
     {
         return $this->iteration;
     }
-    public function setIteration(int $iteration): Sprint
-    {
-        $this->iteration = $iteration;
-        return $this;
-    }
+
     public function getProduct(): Product
     {
         return $this->product;
     }
-    public function setProduct(Product $product): Sprint
+
+    public function getStartDate(): DateTime
     {
-        $this->product = $product;
-        return $this;
+        return $this->startDate;
     }
-    public function getStart(): DateTime
+    public function setStartDate(DateTime $startDate): Sprint
     {
-        return $this->start;
-    }
-    public function setStart(DateTime $start): Sprint
-    {
-        $this->start = $start;
+        $this->startDate = $startDate;
         return $this;
     }
     public function getPlannedEnd(): DateTime
@@ -77,13 +75,13 @@ class Sprint
         $this->plannedEnd = $plannedEnd;
         return $this;
     }
-    public function getEnd(): DateTime
+    public function getEndDate(): DateTime
     {
-        return $this->end;
+        return $this->endDate;
     }
-    public function setEnd(DateTime $end): Sprint
+    public function setEndDate(DateTime $endDate): Sprint
     {
-        $this->end = $end;
+        $this->endDate = $endDate;
         return $this;
     }
     public function getStatus(): string
@@ -105,8 +103,42 @@ class Sprint
         return $this;
     }
 
-    public function addItem(BacklogItem $backlogItem)
+    public function addItem(BacklogItem $backlogItem): void
     {
         $this->items [] = $backlogItem;
+    }
+
+    public function start(): void
+    {
+        if ($this->status !== Sprint::STATUS_CREATED) {
+            throw new Exception("Illegal State");
+        }
+        $this->startDate = new DateTime();
+        $this->status = Sprint::STATUS_STARTED;
+    }
+
+    public function end(): void
+    {
+        if ($this->status !== Sprint::STATUS_STARTED) {
+            throw new Exception("Illegal State");
+        }
+        $this->endDate = new DateTime();
+        $this->status = Sprint::STATUS_FINISHED;
+    }
+
+    function allItemsDone(): bool
+    {
+        return empty($this->getItemsNotDone());
+    }
+
+    /** @return BacklogItem[] */
+    private function getItemsNotDone(): array {
+        $notDoneItems = [];
+        foreach ($this->items as $backlogItem) {
+            if ($backlogItem->getStatus() !== BacklogItem::STATUS_DONE) {
+                $notDoneItems [] = $backlogItem;
+            }
+        }
+        return $notDoneItems;
     }
 }

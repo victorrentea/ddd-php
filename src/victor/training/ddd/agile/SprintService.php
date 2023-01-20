@@ -25,14 +25,11 @@ class SprintService
     public function createSprint(SprintDto $dto): int
     {
         $product = $this->productRepo->findOneById($dto->productId);
-        $sprint = (new Sprint($product)) // Level2: exista sprint fara produs asociat. poate exista ? NU
-            ->setIteration($product->incrementAndGetIteration())
-            ->setProduct($product) // Level1: nu mai e necesar!
-            ->setPlannedEnd($dto->plannedEnd);
+        $sprint = new Sprint($product, $dto->plannedEnd);
         return $this->sprintRepo->save($sprint)->getId();
     }
 
-    public function getSprint(int $id): Sprint
+    public function getSprint(int $id): Sprint // TODO intoarce un Dto
     {
         return $this->sprintRepo->findOneById($id);
     }
@@ -40,32 +37,19 @@ class SprintService
     public function startSprint(int $id): void
     {
         $sprint = $this->sprintRepo->findOneById($id);
-        if ($sprint->getStatus() !== Sprint::STATUS_CREATED) {
-            throw new Exception("Illegal State");
-        }
-        $sprint->setStart(new DateTime());
-        $sprint->setStatus(Sprint::STATUS_STARTED);
+        $sprint->start();
+        $this->sprintRepo->save($sprint);
     }
 
     public function endSprint(int $id)
     {
         $sprint = $this->sprintRepo->findOneById($id);
-        if ($sprint->getStatus() !== Sprint::STATUS_STARTED) {
-            throw new Exception("Illegal State");
-        }
-        $sprint->setEnd(new DateTime());
-        $sprint->setStatus(Sprint::STATUS_FINISHED);
+        $sprint->end();
 
-        $notDoneItems = [];
-        foreach ($sprint->getItems() as $backlogItem) {
-            if ($backlogItem->getStatus() !== BacklogItem::STATUS_DONE) {
-                $notDoneItems [] = $backlogItem;
-            }
-        }
-
-        if (sizeof($notDoneItems) >= 1) {
+        if (!($sprint->allItemsDone())) {
             $this->emailService->sendNotDoneItemsDebrief($sprint->getProduct()->getOwnerEmail(), $notDoneItems);
         }
+        $this->sprintRepo->save($sprint);
     }
 
     public function getSprintMetrics(int $id): SprintMetrics
@@ -80,7 +64,7 @@ class SprintService
             $dto->consumedHours += $backlogItem->getHoursConsumed();
         }
 
-        $dto->calendarDays = $sprint->getEnd()->diff($sprint->getStart())->days;
+        $dto->calendarDays = $sprint->getEndDate()->diff($sprint->getStartDate())->days;
         $dto->doneFP = 0;
         foreach ($sprint->getItems() as $item) {
             if ($item->getStatus() === BacklogItem::STATUS_DONE) {
@@ -96,8 +80,8 @@ class SprintService
             }
         }
 
-        if ($sprint->getEnd()->getTimestamp() > $sprint->getPlannedEnd()->getTimestamp()) {
-            $dto->delayDays = $sprint->getEnd()->diff($sprint->getPlannedEnd())->days;
+        if ($sprint->getEndDate()->getTimestamp() > $sprint->getPlannedEnd()->getTimestamp()) {
+            $dto->delayDays = $sprint->getEndDate()->diff($sprint->getPlannedEnd())->days;
         }
         return $dto;
     }
@@ -173,3 +157,4 @@ class SprintService
     }
 
 }
+
