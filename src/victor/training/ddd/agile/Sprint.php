@@ -160,16 +160,14 @@ class Sprint
         $backlogItem->start();
     }
 
-    public function completeItem(int $sprintItemId,
-                                 NotificationService $notificationService
-    ): void
+    public function completeItem(int $sprintItemId): void
     {
         $backlogItem = $this->findItemById($sprintItemId);
         $this->assertStarted();
         $backlogItem->complete();
 
         if ($this->allItemsDone()) {
-            $notificationService->sendCongratsEmailMaiIncapsulat($this->getProduct());
+            $this->domainEvents []= new SprintItemsDoneEvent($this->id);
         }
 
     }
