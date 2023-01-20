@@ -23,6 +23,8 @@ readonly class InsuranceService
     public function issuePolicy(int $customerId, string $customerName, int $address)
     {
         $policy = new InsurancePolicy($customerId);
+        $policy->setCustomerName($customerName);
+        $policy->setCustomerAddress($address);
         $this->insurancePolicyRepo->save($policy);
     }
     public function requoteCustomerOnAddressChanged(int $customerId, int $address)

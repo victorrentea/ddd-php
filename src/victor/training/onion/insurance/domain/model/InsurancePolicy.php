@@ -20,6 +20,8 @@ class InsurancePolicy
     private int $id;
 
     private int $customerId; // + FK->Customer (ACID FTW!)
+    private string $customerName;
+    private string $customerAddress;
 
     private int $valueInEur;
 
@@ -28,6 +30,15 @@ class InsurancePolicy
         $this->customerId = $customerId;
     }
 
+    public function setCustomerAddress(string $customerAddress): void
+    {
+        $this->customerAddress = $customerAddress;
+    }
+
+    public function setCustomerName(string $customerName): void
+    {
+        $this->customerName = $customerName;
+    }
     public function getCustomerId(): int
     {
         return $this->customerId;
