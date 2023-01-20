@@ -8,5 +8,4 @@ interface NotificationService
 
     public function sendNotDoneItemsDebrief(string $ownerEmail, array $notDoneItems): void;
 
-    public function sendCongratsEmailMaiIncapsulat(int $getId);
 }

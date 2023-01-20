@@ -10,11 +10,14 @@ use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\PreUpdate;
 use Doctrine\ORM\Mapping\Version;
 use Exception;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use victor\training\ddd\agile\ddd\DDDAggregateRoot;
+use victor\training\ddd\agile\events\AllItemsDoneBeforeSprintEndEvent;
+use victor\training\ddd\agile\events\DomainEvent;
 
 #[DDDAggregateRoot]
 #[Entity]
-class Sprint
+class Sprint extends BaseAggregate
 {
     const STATUS_CREATED = 'CREATED';
     const STATUS_STARTED = 'STARTED';
@@ -32,6 +35,8 @@ class Sprint
 
     #[Version] // optimistic locking
     private int $version;
+
+
 
     private string $status = self::STATUS_CREATED;
 
@@ -160,17 +165,22 @@ class Sprint
         $backlogItem->start();
     }
 
+
+//    private NotificationService $notificationService;
     public function completeItem(int $sprintItemId): void
     {
         $backlogItem = $this->findItemById($sprintItemId);
         $this->assertStarted();
         $backlogItem->complete();
 
-        if ($this->allItemsDone()) {
-            $this->domainEvents []= new SprintItemsDoneEvent($this->id);
+        if ($this->allItemsDone()/* && date() - $this->endDate >= 1zi*/) {
+            $this->domainEvents []= new AllItemsDoneBeforeSprintEndEvent($this->id);
         }
-
     }
+
+
+
+
     public function logHoursOnItem(int $sprintItemId, int $hours): void
     {
         $backlogItem = $this->findItemById($sprintItemId);
@@ -193,3 +203,4 @@ class Sprint
         }
     }
 }
+

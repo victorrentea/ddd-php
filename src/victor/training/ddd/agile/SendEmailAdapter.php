@@ -2,8 +2,17 @@
 
 namespace victor\training\ddd\agile;
 
+use Composer\EventDispatcher\EventSubscriberInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use victor\training\ddd\agile\events\AllItemsDoneBeforeSprintEndEvent;
+
 class SendEmailAdapter implements NotificationService
 {
+    public function __construct(EventDispatcherInterface $dispatcher,
+    private readonly SprintRepo $sprintRepo  )
+    {
+        $dispatcher->addListener(AllItemsDoneBeforeSprintEndEvent::class, [$this, 'onAllItemsDoneBeforeSprintEndEvent']);
+    }
 
     public function sendCongratsEmail(array $emails): void
     {
@@ -15,11 +24,13 @@ class SendEmailAdapter implements NotificationService
         echo "The team was unable to declare 'DONE' the following items this iteration: " . notDoneItems;
     }
 
-    public function sendCongratsEmailMaiIncapsulat(int $getId)
-    {
-        echo "Sending CONGRATS email to team of product " . $sprint->getProduct()->getCode() .
+
+    private function onAllItemsDoneBeforeSprintEndEvent(AllItemsDoneBeforeSprintEndEvent $event) {
+        $sprintId = $event->sprintId;
+        echo "Sending CONGRATS email to team of product " . $this->sprintRepo->findOneById($sprintId)->getProduct()->getCode() .
             ": They finished the items earlier. They have time to refactor! (OMG!)";
-        $emails = $this->mailingListService->retrieveEmails($sprint->getProduct()->getTeamMailingList());
+        $emails = $this->mailingListService->retrieveEmails($this->sprintRepo->findOneById($sprintId)->getProduct()->getTeamMailingList());
         $this->emailService->sendCongratsEmail($emails);
     }
+
 }

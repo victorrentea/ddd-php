@@ -94,7 +94,7 @@ class SprintApplicationService
         //   In alta parte in app mea MARE(😏) fac sprint->completeItem() si acolo dar uit de if
 
         // ###3
-        $sprint->completeItem($sprintItemId);
+//        $sprint->completeItem($sprintItemId);
 
         // DE CE OOP:
         // TOCMAI AM GASIT pe obiectul din fata mea (din Domain Model) o functie convenient => Reuse si nu copy paste.
