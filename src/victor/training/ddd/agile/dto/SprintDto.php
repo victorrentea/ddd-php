@@ -7,5 +7,5 @@ use victor\training\ddd\agile\DateTime;
 class SprintDto
 {
     public int $productId;
-    public DateTime $plannedEnd;
+    public \DateTime $plannedEnd;
 }

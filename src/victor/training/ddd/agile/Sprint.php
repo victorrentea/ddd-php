@@ -4,6 +4,7 @@ namespace victor\training\ddd\agile;
 
 
 use DateTime;
+use Doctrine\ORM\Mapping\ManyToOne;
 
 
 class Sprint
@@ -12,17 +13,23 @@ class Sprint
     const STATUS_STARTED = 'STARTED';
     const STATUS_FINISHED = 'FINISHED';
 
-    private int $id;
+    private ?int $id;
     private int $iteration;
+    #[ManyToOne]
     private Product $product;
-    private DateTime $start;
+    private ?DateTime $start;
     private DateTime $plannedEnd;
-    private DateTime $end;
+    private ?DateTime $end;
 
     private string $status = self::STATUS_CREATED;
 
    /** @var BacklogItem[] */
    private array $items = [];
+
+    public function __construct(Product $product)
+    {
+        $this->product = $product;
+    }
 
 
     public function getId(): int

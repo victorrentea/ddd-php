@@ -13,27 +13,21 @@ use victor\training\ddd\agile\dto\SprintMetrics;
 
 class SprintService
 {
-    private SprintRepo $sprintRepo;
-    private ProductRepo $productRepo;
-    private BacklogItemRepo $backlogItemRepo;
-    private EmailService $emailService;
-    private MailingListService $mailingListService;
-
-    public function __construct(SprintRepo $sprintRepo, ProductRepo $productRepo, BacklogItemRepo $backlogItemRepo, EmailService $emailService, MailingListService $mailingListService)
+    public function __construct(private readonly SprintRepo         $sprintRepo,
+                                private readonly ProductRepo        $productRepo,
+                                private readonly BacklogItemRepo    $backlogItemRepo,
+                                private readonly EmailService       $emailService,
+                                private readonly MailingListService $mailingListService
+    )
     {
-        $this->sprintRepo = $sprintRepo;
-        $this->productRepo = $productRepo;
-        $this->backlogItemRepo = $backlogItemRepo;
-        $this->emailService = $emailService;
-        $this->mailingListService = $mailingListService;
     }
 
     public function createSprint(SprintDto $dto): int
     {
         $product = $this->productRepo->findOneById($dto->productId);
-        $sprint = (new Sprint())
+        $sprint = (new Sprint($product)) // Level2: exista sprint fara produs asociat. poate exista ? NU
             ->setIteration($product->incrementAndGetIteration())
-            ->setProduct($product)
+            ->setProduct($product) // Level1: nu mai e necesar!
             ->setPlannedEnd($dto->plannedEnd);
         return $this->sprintRepo->save($sprint)->getId();
     }
