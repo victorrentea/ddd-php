@@ -26,8 +26,11 @@ class BacklogItem
 
     private int $version; // for optimistic locking
 
-    public function addHours(int $hours)
+    public function addHours(int $hours): void
     {
+        if ($this->status !== BacklogItem::STATUS_STARTED) {
+            throw new Exception("Item not started");
+        }
         $this->hoursConsumed += $hours;
     }
 
@@ -130,11 +133,19 @@ class BacklogItem
         return $this;
     }
 
-    public function start()
+    public function start(): void
     {
         if ($this->status != BacklogItem::STATUS_CREATED) {
             throw new Exception("Item already started");
         }
         $this->status = BacklogItem::STATUS_STARTED;
+    }
+
+    public function complete(): void
+    {
+        if ($this->status != BacklogItem::STATUS_STARTED) {
+            throw new Exception("Cannot complete an Item before starting it");
+        }
+        $this->status=  BacklogItem::STATUS_DONE;
     }
 }

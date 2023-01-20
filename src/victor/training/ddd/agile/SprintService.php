@@ -47,7 +47,7 @@ class SprintService
         $sprint->end();
 
         if (!($sprint->allItemsDone())) {
-            $this->emailService->sendNotDoneItemsDebrief($sprint->getProduct()->getOwnerEmail(), $notDoneItems);
+            $this->emailService->sendNotDoneItemsDebrief($sprint->getProduct()->getOwnerEmail(), $sprint->getItemsNotDone());
         }
         $this->sprintRepo->save($sprint);
     }
@@ -67,37 +67,20 @@ class SprintService
 
     public function startItem(int $sprintId, int $backlogId): void
     {
-
         // i have a dream:
         $sprint = $this->sprintRepo->findOneById($sprintId);
         $sprint->startItem($backlogId);
         $this->sprintRepo->save($sprint); //#1 curat cascade: si automat doctrine salveaza toti copii (si cel nou)
 
         // daca vrei performanta poti sa faci startItem sa intoarca itemul de salvat -> itemRepo,save()
-//      $this->backlogItemRepo->save( $sprint->startItem($backlogId));
+//      $this->backlogItemRepo->save( $sprint->findItemById($backlogId));
     }
 
-    private function checkSprintMatchesAndStarted(int $sprintId, BacklogItem $backlogItem): void
+    public function completeItem(int $sprintId, int $backlogId): void
     {
-        if ($backlogItem->getSprint()->getId() !== $sprintId) {
-            throw new Exception("item not in sprint");
-        }
-
         $sprint = $this->sprintRepo->findOneById($sprintId);
-        if ($sprint->getStatus() != Sprint::STATUS_STARTED) {
-            throw new Exception("Sprint not started");
-        }
-    }
-
-    public function completeItem(int $id, int $backlogId): void
-    {
-        $backlogItem = $this->backlogItemRepo->findOneById($backlogId);
-        $this->checkSprintMatchesAndStarted($id, $backlogItem);
-        if ($backlogItem->getStatus() != BacklogItem::STATUS_STARTED) {
-            throw new Exception("Cannot complete an Item before starting it");
-        }
-        $backlogItem->setStatus(BacklogItem::STATUS_DONE);
-        $sprint = $this->sprintRepo->findOneById($id);
+        $sprint->completeItem($backlogId);
+        $this->sprintRepo->save($sprint);
 
         $allDone = true;
         foreach ($sprint->getItems() as $backlogItem) {
@@ -113,14 +96,11 @@ class SprintService
         }
     }
 
-    public function logHours(int $id, LogHoursRequest $request): void
+    public function logHours(int $sprintId, LogHoursRequest $request): void
     {
-        $backlogItem = $this->backlogItemRepo->findOneById($request->backlogId);
-        $this->checkSprintMatchesAndStarted($id, $backlogItem);
-        if ($backlogItem->getStatus() !== BacklogItem::STATUS_STARTED) {
-            throw new Exception("Item not started");
-        }
-        $backlogItem->addHours($request->hours);
+        $sprint = $this->sprintRepo->findOneById($sprintId);
+        $sprint->logHoursOnItem($request->backlogId, $request->hours);
+        $this->sprintRepo->save($sprint);
     }
 
 }

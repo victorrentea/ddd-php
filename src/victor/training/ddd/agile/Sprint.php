@@ -134,7 +134,7 @@ class Sprint
     }
 
     /** @return BacklogItem[] */
-    private function getItemsNotDone(): array {
+     function getItemsNotDone(): array {
         $notDoneItems = [];
         foreach ($this->items as $backlogItem) {
             if ($backlogItem->getStatus() !== BacklogItem::STATUS_DONE) {
@@ -151,7 +151,20 @@ class Sprint
         $backlogItem->start();
     }
 
-    private function findItemById(int $backlogId)
+    public function completeItem(int $backlogId): void
+    {
+        $backlogItem = $this->findItemById($backlogId);
+        $this->assertStarted();
+        $backlogItem->complete();
+    }
+    public function logHoursOnItem(int $backlogId, int $hours): void
+    {
+        $backlogItem = $this->findItemById($backlogId);
+        $this->assertStarted();
+        $backlogItem->addHours($hours);
+    }
+
+    private function findItemById(int $backlogId): BacklogItem
     {
         foreach ($this->items as $item) {
             if ($item->getId() === $backlogId) return $item;
