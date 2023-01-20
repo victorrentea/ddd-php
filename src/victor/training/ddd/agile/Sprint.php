@@ -7,6 +7,7 @@ use DateTime;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\PreUpdate;
 use Doctrine\ORM\Mapping\Version;
 use Exception;
 use victor\training\ddd\agile\ddd\DDDAggregateRoot;
@@ -44,7 +45,6 @@ class Sprint
         $this->iteration = $product->incrementAndGetIteration();
         $this->plannedEnd = $plannedEnd;
     }
-
 
     public function getId(): int
     {
@@ -160,11 +160,18 @@ class Sprint
         $backlogItem->start();
     }
 
-    public function completeItem(int $sprintItemId): void
+    public function completeItem(int $sprintItemId,
+                                 NotificationService $notificationService
+    ): void
     {
         $backlogItem = $this->findItemById($sprintItemId);
         $this->assertStarted();
         $backlogItem->complete();
+
+        if ($this->allItemsDone()) {
+            $notificationService->sendCongratsEmailMaiIncapsulat($this->getProduct());
+        }
+
     }
     public function logHoursOnItem(int $sprintItemId, int $hours): void
     {

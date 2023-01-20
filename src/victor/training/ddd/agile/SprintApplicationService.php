@@ -10,14 +10,14 @@ use victor\training\ddd\agile\dto\LogHoursRequest;
 use victor\training\ddd\agile\dto\SprintDto;
 
 
-class SprintService
+class SprintApplicationService
 {
-    public function __construct(private readonly SprintRepo         $sprintRepo,
-                                private readonly ProductRepo        $productRepo,
-                                private readonly BacklogItemRepo    $backlogItemRepo,
-                                private readonly SprintItemRepo     $sprintItemRepo,
-                                private readonly EmailService       $emailService,
-                                private readonly MailingListService $mailingListService
+    public function __construct(private readonly SprintRepo          $sprintRepo,
+                                private readonly ProductRepo         $productRepo,
+                                private readonly BacklogItemRepo     $backlogItemRepo,
+                                private readonly SprintItemRepo      $sprintItemRepo,
+                                private readonly NotificationService $notificationService,
+                                private readonly MailingListService  $mailingListService
     )
     {
     }
@@ -47,7 +47,7 @@ class SprintService
         $sprint->end();
 
         if (!($sprint->allItemsDone())) {
-            $this->emailService->sendNotDoneItemsDebrief($sprint->getProduct()->getOwnerEmail(), $sprint->getItemsNotDone());
+            $this->notificationService->sendNotDoneItemsDebrief($sprint->getProduct()->getOwnerEmail(), $sprint->getItemsNotDone());
         }
         $this->sprintRepo->save($sprint);
     }
@@ -83,18 +83,27 @@ class SprintService
         $sprint->completeItem($sprintItemId);
         $this->sprintRepo->save($sprint);
 
-        $allDone = true;
-        foreach ($sprint->getItems() as $backlogItem) {
-            if ($backlogItem->getStatus() !== SprintItem::STATUS_DONE) {
-                $allDone = false;
-                break;
-            }
-        }
-        if (!$allDone) {
-            echo "Sending CONGRATS email to team of product " . $sprint->getProduct()->getCode() . ": They finished the items earlier. They have time to refactor! (OMG!)";
-            $emails = $this->mailingListService->retrieveEmails($sprint->getProduct()->getTeamMailingList());
-            $this->emailService->sendCongratsEmail($emails);
-        }
+        // ###1 Event aruncat de catre save() printr-un hook de ORM care te anunta cand a rulat INSERTul cu succes in DB
+        //   ( Mai bine decat Event aruncat din completeItem NU pt ca poata crapa save() dupa )
+        //   AM NOROC ca vreau fire-and-forget => merge eventuri
+        //   SCOP: pt ca e un flux unrelated (alta Marie..., SRP)
+        //   implem: AggRoot aduna un array de 'eventsToPublish' iar @PostFlush hook-ul le publica pe EventPublisherInterface
+
+        // ###2 Las-o asa (adica lasa orchestrarea aici din ApplicationService)
+        //   Risk? era o biz-regula: la terminarea sprintului tre trimis un mail
+        //   In alta parte in app mea MARE(😏) fac sprint->completeItem() si acolo dar uit de if
+
+        // ###3
+        $sprint->completeItem($sprintItemId, $this->notificationService);
+
+
+//        if ($sprint->allItemsDone()) {
+//            $this->notificationService->sendCongratsEmailMaiIncapsulat($sprint->getProduct()->getId());
+//        }
+
+        // DE CE OOP:
+        // TOCMAI AM GASIT pe obiectul din fata mea (din Domain Model) o functie convenient => Reuse si nu copy paste.
+        // fata de a cauta intr-un <Sprint> Util/Helper
     }
 
 }
