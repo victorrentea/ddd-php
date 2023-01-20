@@ -17,11 +17,11 @@ use victor\training\onion\domain\repo\CustomerRepo;
 use victor\training\onion\domain\service\InsuranceService;
 use victor\training\onion\domain\service\RegisterCustomerService;
 
-class CustomerController
+class CustomerApplicationService
 {
     public function __construct(private CustomerRepo $customerRepository,
                                 private InsuranceService $insuranceService,
-        private RegisterCustomerService $registerCustomerService
+                                private RegisterCustomerService $registerCustomerService
     )
     {
     }
@@ -31,8 +31,6 @@ class CustomerController
     {
         return $this->customerRepository->search($searchCriteria);
     }
-
-
 
     function getCustomerById(int $customerId): CustomerDto
     {
