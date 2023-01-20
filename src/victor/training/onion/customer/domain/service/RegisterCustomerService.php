@@ -1,8 +1,8 @@
 <?php
 
-namespace victor\training\onion\other\domain\service;
+namespace victor\training\onion\customer\domain\service;
 
-use victor\training\onion\other\domain\model\Customer;
+use victor\training\onion\customer\domain\model\Customer;
 
 class RegisterCustomerService
 {

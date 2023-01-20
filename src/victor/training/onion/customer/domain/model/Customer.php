@@ -1,6 +1,6 @@
 <?php
 
-namespace victor\training\onion\other\domain\model;
+namespace victor\training\onion\customer\domain\model;
 
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;

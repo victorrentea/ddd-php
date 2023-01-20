@@ -1,14 +1,17 @@
 <?php
 
-namespace victor\training\onion\other\domain\model;
+namespace victor\training\onion\insurance\domain\model;
 
 use Doctrine\ORM\Mapping\Embedded;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
+use victor\training\ddd\agile\ddd\DDDAggregateRoot;
+use victor\training\onion\customer\domain\model\Customer;
 use victor\training\onion\domain\model\Fix;
 
+#[DDDAggregateRoot]
 #[Entity]
 class InsurancePolicy
 {
@@ -16,16 +19,19 @@ class InsurancePolicy
     #[GeneratedValue]
     private int $id;
 
-    #[Embedded]
-    private Fix $departure;
-
-//    private int $departureLatitude;
-//    private int $departureLongitude;
-
-    #[ManyToOne]
-    private Customer $customer;
+    private int $customerId; // + FK->Customer (ACID FTW!)
 
     private int $valueInEur;
+
+    public function __construct(int $customerId)
+    {
+        $this->customerId = $customerId;
+    }
+
+    public function getCustomerId(): int
+    {
+        return $this->customerId;
+    }
 
     public function getId(): int
     {

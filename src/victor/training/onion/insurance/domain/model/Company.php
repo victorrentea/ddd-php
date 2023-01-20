@@ -1,6 +1,6 @@
 <?php
 
-namespace victor\training\onion\other\domain\model;
+namespace victor\training\onion\insurance\domain\model;
 
 // VALUE OBJECT fac ce vreau in el
 //pun logica langa datele  pe care lucreaza = OOP << DDD zice sa faci asta!

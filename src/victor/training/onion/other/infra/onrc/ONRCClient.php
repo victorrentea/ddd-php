@@ -4,8 +4,8 @@ namespace victor\training\onion\other\infra\onrc;
 
 use Exception;
 use Safe\DateTimeImmutable;
-use victor\training\onion\other\domain\model\Company;
-use victor\training\onion\other\domain\service\ONRCClientInterface;
+use victor\training\onion\insurance\domain\model\Company;
+use victor\training\onion\insurance\domain\service\ONRCClientInterface;
 
 class ONRCClient implements ONRCClientInterface
 { // adapter peste api-ul onrc

@@ -9,13 +9,13 @@
 namespace victor\training\onion\other\application\service;
 
 
+use victor\training\onion\customer\domain\model\Customer;
+use victor\training\onion\customer\domain\repo\CustomerRepo;
+use victor\training\onion\customer\domain\service\RegisterCustomerService;
+use victor\training\onion\insurance\domain\service\InsuranceService;
 use victor\training\onion\other\application\dto\CustomerDto;
 use victor\training\onion\other\application\dto\CustomerSearchCriteria;
 use victor\training\onion\other\application\dto\CustomerSearchResult;
-use victor\training\onion\other\domain\model\Customer;
-use victor\training\onion\other\domain\repo\CustomerRepo;
-use victor\training\onion\other\domain\service\InsuranceService;
-use victor\training\onion\other\domain\service\RegisterCustomerService;
 
 class CustomerApplicationService
 {
@@ -59,7 +59,7 @@ class CustomerApplicationService
         $this->registerCustomerService->register($customer);
 //        $customer->register();
 
-        $this->insuranceService->requoteCustomer($customer);
+        $this->insuranceService->requoteCustomerOnAddressChanged($customer);
     }
 
 }
