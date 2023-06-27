@@ -4,20 +4,21 @@ namespace victor\training\ddd\agile;
 
 
 
-
-class BacklogItem
+// Entity
+class BacklogItem //  implements Entity din Sprint Aggregate
 {
     const STATUS_CREATED = 'CREATED';
     const STATUS_STARTED = 'STARTED';
     const STATUS_DONE = 'DONE';
 
     private int $id;
-    private Product $product;
+//    private Product $product;
+//    private int $productId;
+
     private string $title;
     private string $description;
+
     private string $status = self::STATUS_CREATED;
-
-
     private Sprint $sprint; // ⚠ not NULL when assigned to a sprint
     private int $fpEstimation; // ⚠ not NULL when assigned to a sprint
     private int $hoursConsumed; // ⚠ not NULL when assigned to a sprint
@@ -127,4 +128,13 @@ class BacklogItem
         $this->version = $version;
         return $this;
     }
+
+    public function start()
+    {
+        if ($this->status != BacklogItem::STATUS_CREATED) {
+            throw new \Exception("Item already started");
+        }
+        $this->status = BacklogItem::STATUS_STARTED;
+    }
+
 }
