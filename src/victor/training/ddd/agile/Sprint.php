@@ -5,9 +5,8 @@ namespace victor\training\ddd\agile;
 
 use DateTime;
 
-// AggregateRoot
-class Sprint //implements AggregateRoot
-// extends AggregateRoot
+
+class Sprint
 {
     const STATUS_CREATED = 'CREATED';
     const STATUS_STARTED = 'STARTED';
@@ -15,12 +14,7 @@ class Sprint //implements AggregateRoot
 
     private int $id;
     private int $iteration;
-    private int $productId; // tii doar ID-ul altor agregate.
-//    private Product $product;
-
-//    private ProductRepo $productRepo;
-    // DOAMNE fereste injectie de dependinte in
-
+    private Product $product;
     private DateTime $start;
     private DateTime $plannedEnd;
     private DateTime $end;
@@ -29,6 +23,7 @@ class Sprint //implements AggregateRoot
 
    /** @var BacklogItem[] */
    private array $items = [];
+
 
     public function getId(): int
     {
@@ -41,7 +36,6 @@ class Sprint //implements AggregateRoot
     }
     public function getIteration(): int
     {
-//        $this->product->setName()
         return $this->iteration;
     }
     public function setIteration(int $iteration): Sprint
@@ -107,18 +101,5 @@ class Sprint //implements AggregateRoot
     public function addItem(BacklogItem $backlogItem)
     {
         $this->items [] = $backlogItem;
-    }
-
-    public function startItem(int $backlogItemId) {
-        $this->checkSprintStarted();
-        $backlogItem = array_filter($this->items, fn($item) => $item->getId() === $backlogItemId)[0];
-        $backlogItem-> start();
-    }
-
-    private function checkSprintStarted(): void
-    {
-        if ($this->getStatus() != Sprint::STATUS_STARTED) {
-            throw new \Exception("Sprint not started");
-        }
     }
 }

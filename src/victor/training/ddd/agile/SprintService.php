@@ -156,14 +156,14 @@ class SprintService
     }
 
 
-    public function startItem(int $sprintId, int $backlogId): void
+    public function startItem(int $id, int $backlogId): void
     {
-        // cu aggregate NU SCOTI DIN REPO DECAT AGGREGATE ROOT, nu entitati daca vrei sa modifici (COMMAND)
-        $sprint = $this->sprintRepo->findOneById($sprintId);
-        $sprint->startItem($backlogId);
-//        $backlogItem = $this->backlogItemRepo->findOneById($backlogId);
-//        $this->checkSprintMatchesAndStarted($sprintId, $backlogItem);
-//        $backlogItem->start();
+        $backlogItem = $this->backlogItemRepo->findOneById($backlogId);
+        $this->checkSprintMatchesAndStarted($id, $backlogItem);
+        if ($backlogItem->getStatus() != BacklogItem::STATUS_CREATED) {
+            throw new Exception("Item already started");
+        }
+        $backlogItem->setStatus(BacklogItem::STATUS_STARTED);
     }
 
     private function checkSprintMatchesAndStarted(int $id, BacklogItem $backlogItem): void
