@@ -9,6 +9,7 @@
 namespace victor\training\onion\application\service;
 
 
+use Doctrine\ORM\EntityManager;
 use victor\training\onion\application\dto\CustomerDto;
 use victor\training\onion\application\dto\CustomerSearchCriteria;
 use victor\training\onion\application\dto\CustomerSearchResult;
@@ -20,17 +21,30 @@ class CustomerApplicationService
 {
     private CustomerRepo $customerRepository;
     private InsuranceService $insuranceService;
+    private EntityManager $entityManager;
 
-    public function __construct(CustomerRepo $customerRepository, \victor\training\onion\domain\service\InsuranceService $insuranceService)
+    public function __construct(CustomerRepo $customerRepository, InsuranceService $insuranceService, \Doctrine\ORM\EntityManager $entityManager)
     {
         $this->customerRepository = $customerRepository;
         $this->insuranceService = $insuranceService;
+        $this->entityManager = $entityManager;
     }
 
     /** @return CustomerSearchResult[] */
     function search(CustomerSearchCriteria $searchCriteria): array
     {
-        return $this->customerRepository->search($searchCriteria);
+        $q = $this->entityManager->createQueryBuilder()
+            ->select("NEW CustomerSearchResult(c.id, c.name, c.email) FROM Customer c");
+
+        if ($searchCriteria->getName())
+            $q->where('c.name = :name')
+                ->setParameter('name', $searchCriteria->getName());
+
+        if ($searchCriteria->getEmail())
+            $q->where('c.email = :email')
+                ->setParameter('email', $searchCriteria->getEmail());
+
+        return $q->getQuery()->getArrayResult();
     }
 
     function getCustomerById(int $customerId): CustomerDto
@@ -40,6 +54,9 @@ class CustomerApplicationService
         $dto->setName($customer->getName());
         $dto->setEmail($customer->getEmail());
         $dto->setAddress($customer->getAddress());
+        $dto->setShippingAddressCity($customer->getShippingAddressCity());
+        $dto->setShippingAddressStreet($customer->getShippingAddressStreet());
+        $dto->setShippingAddressZip($customer->getShippingAddressZip());
         return $dto;
     }
 
@@ -50,6 +67,9 @@ class CustomerApplicationService
         $customer->setName($customerDto->getName());
         $customer->setEmail($customerDto->getEmail());
         $customer->setAddress($customerDto->getAddress());
+        $customer->setShippingAddressCity($customerDto->getShippingAddressCity());
+        $customer->setShippingAddressStreet($customerDto->getShippingAddressStreet());
+        $customer->setShippingAddressZip($customerDto->getShippingAddressZip());
 
         if (! $customer->getEmail()) {
             throw new \Exception("Bum");

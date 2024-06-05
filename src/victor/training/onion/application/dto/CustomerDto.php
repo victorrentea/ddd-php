@@ -8,6 +8,9 @@ class CustomerDto
     private string $name;
     private string $email;
     private string $address;
+    private string $shippingAddressCity;
+    private string $shippingAddressStreet;
+    private string $shippingAddressZip;
 
     public function getName(): string
     {
@@ -41,5 +44,39 @@ class CustomerDto
         $this->address = $address;
         return $this;
     }
+
+    public function getShippingAddressCity(): string
+    {
+        return $this->shippingAddressCity;
+    }
+
+    public function setShippingAddressCity(string $shippingAddressCity): CustomerDto
+    {
+        $this->shippingAddressCity = $shippingAddressCity;
+        return $this;
+    }
+
+    public function getShippingAddressStreet(): string
+    {
+        return $this->shippingAddressStreet;
+    }
+
+    public function setShippingAddressStreet(string $shippingAddressStreet): CustomerDto
+    {
+        $this->shippingAddressStreet = $shippingAddressStreet;
+        return $this;
+    }
+
+    public function getShippingAddressZip(): string
+    {
+        return $this->shippingAddressZip;
+    }
+
+    public function setShippingAddressZip(string $shippingAddressZip): CustomerDto
+    {
+        $this->shippingAddressZip = $shippingAddressZip;
+        return $this;
+    }
+
 
 }

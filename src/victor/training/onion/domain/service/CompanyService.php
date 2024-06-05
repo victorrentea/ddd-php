@@ -4,7 +4,6 @@ namespace victor\training\onion\domain\service;
 
 use Exception;
 use victor\training\onion\infra\onrc\ONRCApiClient;
-use victor\training\onion\infra\onrc\ONRCLegalEntity;
 
 readonly class CompanyService
 {
@@ -27,11 +26,11 @@ readonly class CompanyService
         $this->deepDomainLogic($onrcle);
     }
 
-    private function deepDomainLogic(ONRCLegalEntity $dto) // ⚠️ useless fields
+    private function deepDomainLogic(array $dto) // ⚠️ useless fields
     {
-        echo "send 'Thank you' email to " . $dto->getMainEml();  // ⚠️ bad attribute name
+        echo "send 'Thank you' email to " . $dto["mainEml"];  // ⚠️ bad attribute name
 
-        $year = $dto->getRegistrationDate()->format('Y');  // ⚠️ pending NullPointerException
+        $year = $dto["registrationDate"]->format('Y');  // ⚠️ what if date is null?
         if (date('Y') - $year < 2) {
             throw new Exception("Too young");
         }
@@ -39,20 +38,20 @@ readonly class CompanyService
         $this->innocentHack($dto);
         $this->deeper($dto);
 
-        $name = $dto->getExtendedFullName() != null ? $dto->getExtendedFullName() : $dto->getShortName(); // ⚠️ data mapping mixed with biz logic
+        $name = $dto["extendedFullName"] != null ? $dto["extendedFullName"] : $dto["shortName"]; // ⚠️ data mapping mixed with biz logic
         echo "set order placed by $name";
     }
 
-    private function innocentHack(ONRCLegalEntity $dto): void
+    private function innocentHack(array &$dto): void
     {
-        if ($dto->getEuregno() == null) {
-            $dto->setEuregno("RO" . $dto->getOnrcId()); // ⚠️ mutability risks
+        if ($dto["euregno"] == null) {
+            $dto["euregno"]="RO" . $dto["onrcId"]; // ⚠️ mutability risks
         }
     }
 
-    private function deeper(ONRCLegalEntity $dto) // ⚠️ useless fields
+    private function deeper(array $dto) // ⚠️ useless fields
     {
-        $name = $dto->getExtendedFullName() != null ? $dto->getExtendedFullName() : $dto->getShortName(); // ⚠️ repeated logic
-        echo "set shipped to $name, having EU reg: " . $dto->getEuregno();
+        $name = $dto["extendedFullName"] != null ? $dto["extendedFullName"] : $dto["shortName"]; // ⚠️ repeated logic
+        echo "set shipped to $name, having EU reg: " . $dto["euregno"];
     }
 }

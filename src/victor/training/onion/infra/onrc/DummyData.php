@@ -11,21 +11,24 @@ namespace victor\training\onion\infra\onrc;
 
 class DummyData
 {
-    /* @return ONRCLegalEntity[] */
-    public static function getData() {
-        $ldapUser1 = (new ONRCLegalEntity())
-            ->setShortName("John")
-            ->setExtendedFullName("DOE")
-            ->setOnrcId("jdoe")
-            ->setRegistrationDate(new \DateTime())
-            ->setMainEml("0123456789")
-            ->setEmailAddresses(array(new ONRCLegalEntityContactEmail("WORK", ONRCLegalEntityContactEmailType::OFFICE)));
-        $ldapUser2 = (new ONRCLegalEntity())
-            ->setShortName("Jane")
-            ->setExtendedFullName("DOE")
-            ->setOnrcId("janedoe")
-            ->setRegistrationDate(new \DateTime());
-//        return array($ldapUser1, $ldapUser2);
-        return array($ldapUser1);
+    public static function getData(): array {
+        $ldapUser1 = [
+            "shortName" => "John",
+            "extendedFullName" => "DOE",
+            "onrcId" => "jdoe",
+            "registrationDate" => new \DateTime(),
+            "mainEml" => "0123456789",
+            "emailAddresses" => [
+                ["type" => "WORK", "email" => "OFFICE@office.com"]
+                //type can be case OFFICE;//    case LEGAL;//    case SALES;
+            ]
+        ];
+        $ldapUser2 = [
+            "shortName" => "Jane",
+            "extendedFullName" => "DOE",
+            "onrcId" => "janedoe",
+            "registrationDate" => new \DateTime()
+        ];
+        return [$ldapUser1, $ldapUser2];
     }
 }
