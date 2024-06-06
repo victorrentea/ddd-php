@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 use victor\training\ddd\agile\ProductRepo;
 use victor\training\modulith\catalog\app\Product;
 
-class CatalogInternalApi
+class CatalogInternalApi implements CatalogInternalApiInterface
 {
     public function __construct(private EntityManager $entityManager)
     {

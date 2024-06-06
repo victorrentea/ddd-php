@@ -6,17 +6,18 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use victor\training\modulith\catalog\in\internal\CatalogInternalApi;
+use victor\training\modulith\catalog\in\internal\CatalogInternalApiInterface;
 use victor\training\modulith\inventory\InventoryInternalApi;
 use victor\training\modulith\shipping\ShippingResultEvent;
 
 class PlaceOrderApi
 {
 
-    public function __construct(private EntityManager        $entityManager,
-                                private CatalogInternalApi   $catalogInternalApi,
-                                private InventoryInternalApi $inventoryInternalApi,
-                                private PaymentService       $paymentService,
-                                EventDispatcherInterface $dispatcher)
+    public function __construct(private EntityManager               $entityManager,
+                                private CatalogInternalApiInterface $catalogInternalApi,
+                                private InventoryInternalApi        $inventoryInternalApi,
+                                private PaymentService              $paymentService,
+                                EventDispatcherInterface            $dispatcher)
     {
         $dispatcher->addListener('shipping.result', [$this, 'onShippingResultEvent']);
     }

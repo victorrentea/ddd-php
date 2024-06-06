@@ -2,6 +2,8 @@
 
 namespace victor\training\onion\domain\model;
 
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Embedded;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
@@ -12,15 +14,14 @@ class Customer
     #[Id]
     #[GeneratedValue]
     private int $id;
+    #[Column]
     private string $name;
     private string $email;
     private string $address;
     private bool $genius;
 
-    // 🤔 Hmm... 3 fields with the same prefix. What TODO ?
-    private string $shippingAddressCity;
-    private string $shippingAddressStreet;
-    private string $shippingAddressZip;
+    #[Embedded] // NU FACI NICI UN ALTER TABLE; rame la fel tablea
+    private ShippingAddress $shippingAddress;
 
     private ?CustomerStatus $status;
     private ?string $validatedBy; // ⚠ Always not-null when status = VALIDATED or later
@@ -101,37 +102,14 @@ class Customer
         return $this;
     }
 
-    public function getShippingAddressCity(): string
+    public function getShippingAddress(): ShippingAddress
     {
-        return $this->shippingAddressCity;
+        return $this->shippingAddress;
     }
 
-    public function getShippingAddressStreet(): string
+    public function setShippingAddress(ShippingAddress $shippingAddress): void
     {
-        return $this->shippingAddressStreet;
-    }
-
-    public function getShippingAddressZip(): string
-    {
-        return $this->shippingAddressZip;
-    }
-
-    public function setShippingAddressCity(string $shippingAddressCity): Customer
-    {
-        $this->shippingAddressCity = $shippingAddressCity;
-        return $this;
-    }
-
-    public function setShippingAddressStreet(string $shippingAddressStreet): Customer
-    {
-        $this->shippingAddressStreet = $shippingAddressStreet;
-        return $this;
-    }
-
-    public function setShippingAddressZip(string $shippingAddressZip): Customer
-    {
-        $this->shippingAddressZip = $shippingAddressZip;
-        return $this;
+        $this->shippingAddress = $shippingAddress;
     }
 }
 

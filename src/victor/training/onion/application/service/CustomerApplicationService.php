@@ -14,6 +14,7 @@ use victor\training\onion\application\dto\CustomerDto;
 use victor\training\onion\application\dto\CustomerSearchCriteria;
 use victor\training\onion\application\dto\CustomerSearchResult;
 use victor\training\onion\domain\model\Customer;
+use victor\training\onion\domain\model\ShippingAddress;
 use victor\training\onion\domain\repo\CustomerRepo;
 use victor\training\onion\domain\service\InsuranceService;
 
@@ -54,9 +55,9 @@ class CustomerApplicationService
         $dto->setName($customer->getName());
         $dto->setEmail($customer->getEmail());
         $dto->setAddress($customer->getAddress());
-        $dto->setShippingAddressCity($customer->getShippingAddressCity());
-        $dto->setShippingAddressStreet($customer->getShippingAddressStreet());
-        $dto->setShippingAddressZip($customer->getShippingAddressZip());
+        $dto->setShippingAddressCity($customer->getShippingAddress()->city);
+        $dto->setShippingAddressStreet($customer->getShippingAddress()->street);
+        $dto->setShippingAddressZip($customer->getShippingAddress()->zip);
         return $dto;
     }
 
@@ -67,9 +68,7 @@ class CustomerApplicationService
         $customer->setName($customerDto->getName());
         $customer->setEmail($customerDto->getEmail());
         $customer->setAddress($customerDto->getAddress());
-        $customer->setShippingAddressCity($customerDto->getShippingAddressCity());
-        $customer->setShippingAddressStreet($customerDto->getShippingAddressStreet());
-        $customer->setShippingAddressZip($customerDto->getShippingAddressZip());
+        $customer->setShippingAddress(new ShippingAddress($customerDto->getShippingAddressCity(), $customerDto->getShippingAddressStreet(), $customerDto->getShippingAddressZip()));
 
         if (! $customer->getEmail()) {
             throw new \Exception("Bum");
