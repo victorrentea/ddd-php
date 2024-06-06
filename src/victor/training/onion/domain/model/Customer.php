@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping\Embedded;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use victor\training\onion\application\service\CustomerApplicationService;
 
 #[Entity]
 class Customer
@@ -23,33 +24,40 @@ class Customer
     #[Embedded] // NU FACI NICI UN ALTER TABLE; rame la fel tablea
     private ShippingAddress $shippingAddress;
 
-    private ?CustomerStatus $status;
-    private ?string $validatedBy; // ⚠ Always not-null when status = VALIDATED or later
+    private CustomerStatus $status = CustomerStatus::DRAFT;
+    private ?string $validatedBy; // ⚠ Always🤞 not-null when status = VALIDATED or later
 
     public function setId(int $id): void
     {
         $this->id = $id;
     }
-    public function getStatus(): ?CustomerStatus
-    {
+    public function getStatus(): CustomerStatus {
         return $this->status;
     }
-
-    public function setStatus(?CustomerStatus $status): Customer
-    {
-        $this->status = $status;
-        return $this;
+    public function markValidated(string $validatedBy) {
+        if ($this->status != CustomerStatus::DRAFT) {
+            throw new \InvalidArgumentException("Can't validate a customer that is not in DRAFT status");
+        }
+        $this->status = CustomerStatus::VALIDATED;
+        $this->validatedBy = $validatedBy;
     }
+    public function activate() {
+        if ($this->status != CustomerStatus::VALIDATED) {
+            throw new \InvalidArgumentException("Can't activate a customer that is not in VALIDATED status");
+        }
+        $this->status = CustomerStatus::ACTIVE;
+    }
+    public function delete() {
+        if ($this->status != CustomerStatus::ACTIVE) {
+            throw new \InvalidArgumentException("Can't delete a customer that is not in VALIDATED status");
+        }
+        $this->status = CustomerStatus::DELETED;
+    }
+
 
     public function getValidatedBy(): ?string
     {
         return $this->validatedBy;
-    }
-
-    public function setValidatedBy(?string $validatedBy): Customer
-    {
-        $this->validatedBy = $validatedBy;
-        return $this;
     }
 
 
@@ -111,14 +119,27 @@ class Customer
     {
         $this->shippingAddress = $shippingAddress;
     }
+
+    // public function f(AltaEntitateCu50Campuri $rau)
+    // public function f(UnService $rau, UnApiCaller $imaiRau, EntityManager $atat) < NICIODATA
+    public function getDiscount(): int
+    {
+        $discountPercentage = 3;
+        if ($this->isGenius()) {
+            $discountPercentage = 4;
+        }
+        return $discountPercentage;
+    }
 }
 
 //region Code in the project might [not] follow the rule
 function ok(Customer $draftCustomer) {
-    $draftCustomer->setStatus(CustomerStatus::VALIDATED);
-    $draftCustomer->setValidatedBy("currentUser"); // from token/session..
+    $draftCustomer->markValidated("user");
 }
 function notOk(Customer $draftCustomer) {
-    $draftCustomer->setStatus(CustomerStatus::VALIDATED);
+    $draftCustomer->markValidated("user");
+}
+function ok2(Customer $activeCustomer) {
+    $activeCustomer->delete();
 }
 //endregion

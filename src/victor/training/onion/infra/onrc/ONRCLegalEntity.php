@@ -95,7 +95,6 @@ class ONRCLegalEntity
 
     /**
      * @param ONRCLegalEntityContactEmail[] $emailAddresses
-     * @return ONRCLegalEntity
      */
     public function setEmailAddresses(array $emailAddresses): ONRCLegalEntity
     {
@@ -113,17 +112,11 @@ class ONRCLegalEntity
         $this->effectiveRegistrationDate = $effectiveRegistrationDate;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEuregno(): ?string
     {
         return $this->euregno;
     }
 
-    /**
-     * @param string|null $euregno
-     */
     public function setEuregno(?string $euregno): void
     {
         $this->euregno = $euregno;

@@ -78,10 +78,7 @@ class CustomerApplicationService
         // business logic
         // business logic
         // business logic
-        $discountPercentage = 3;
-        if ($customer->isGenius()) {
-            $discountPercentage = 4;
-        }
+        $discountPercentage = $customer->getDiscount();
         echo "Biz logic with $discountPercentage";
         // business logic
         // business logic
