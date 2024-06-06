@@ -9,16 +9,11 @@ use victor\training\onion\domain\repo\InsurancePolicyRepo;
 
 class InsuranceService
 {
-    private InsurancePolicyRepo $insurancePolicyRepo;
-    private CustomerRepo $customerRepo;
-    private EventDispatcherInterface $dispatcher;
 
-    public function __construct(InsurancePolicyRepo $insurancePolicyRepo, CustomerRepo $customerRepo, EventDispatcherInterface $dispatcher)
+    public function __construct(
+        private InsurancePolicyRepo $insurancePolicyRepo,
+        EventDispatcherInterface $dispatcher)
     {
-        $this->insurancePolicyRepo = $insurancePolicyRepo;
-        $this->customerRepo = $customerRepo;
-        $this->dispatcher = $dispatcher;
-
 //        $dispatcher->addListener('requote.customer', [$this, 'requoteCustomer']);
     }
 

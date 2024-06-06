@@ -7,11 +7,8 @@ use victor\training\onion\infra\onrc\ONRCApiClient;
 
 readonly class CompanyService
 {
-    private ONRCApiClient $apiClient;
-
-    public function __construct(ONRCApiClient $apiClient)
+    public function __construct(private ONRCApiClient $apiClient)
     {
-        $this->apiClient = $apiClient;
     }
 
     public function placeCorporateOrder(string $cif): void

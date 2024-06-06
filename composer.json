@@ -24,8 +24,26 @@
     "j6s/phparch": "3.*",
     "doctrine/orm": "^2.11.0",
     "doctrine/dbal": "^3.2",
-    "symfony/yaml": "^5.4",
-    "symfony/cache": "^5.4",
-    "symfony/event-dispatcher": "5.4"
+    "symfony/yaml": "^7",
+    "symfony/cache": "^7.1",
+    "symfony/event-dispatcher": "^7.1",
+    "symfony/console": "7.1.*",
+    "symfony/dotenv": "7.1.*",
+    "symfony/flex": "^2",
+    "symfony/framework-bundle": "7.1.*",
+    "symfony/runtime": "7.1.*"
+
+  },
+  "config": {
+    "allow-plugins": {
+      "symfony/flex": true,
+      "symfony/runtime": true
+    }
+  },
+  "scripts": {
+    "auto-scripts": {
+      "cache:clear": "symfony-cmd",
+      "assets:install %PUBLIC_DIR%": "symfony-cmd"
+    }
   }
 }
