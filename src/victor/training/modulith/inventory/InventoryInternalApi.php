@@ -22,4 +22,10 @@ class InventoryInternalApi
     {
         $this->stockService->confirmReservation($orderId);
     }
+    public function getStockByProduct(int $productId): int
+    {
+        $stock = $this->entityManager->getRepository(Stock::class)
+            ->findOneBy(["productId" => $productId]);
+        return $stock->getItems();
+    }
 }
