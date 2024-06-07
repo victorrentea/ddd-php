@@ -1,8 +1,9 @@
 <?php
 
-namespace victor\training\modulith\inventory;
+namespace victor\training\modulith\inventory\interapi;
 
 use Doctrine\ORM\EntityManager;
+use victor\training\modulith\inventory\app\Stock;
 use victor\training\modulith\inventory\app\StockService;
 
 class InventoryInternalApi
@@ -22,10 +23,10 @@ class InventoryInternalApi
     {
         $this->stockService->confirmReservation($orderId);
     }
-    public function getStockByProduct(int $productId): int
+    public function getStockByProduct(int $productId): StockIDto
     {
         $stock = $this->entityManager->getRepository(Stock::class)
             ->findOneBy(["productId" => $productId]);
-        return $stock->getItems();
+        return new StockIDto($stock->getItems(), $stock->getProductId());
     }
 }

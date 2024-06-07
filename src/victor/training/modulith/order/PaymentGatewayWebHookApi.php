@@ -3,12 +3,10 @@
 namespace victor\training\modulith\order;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
-use victor\training\modulith\inventory\InventoryInternalApi;
+use victor\training\modulith\inventory\interapi\InventoryInternalApi;
 use victor\training\modulith\shipping\ShippingInternalApi;
-use victor\training\modulith\shipping\ShippingResultEvent;
 
 class PaymentGatewayWebHookApi
 {
