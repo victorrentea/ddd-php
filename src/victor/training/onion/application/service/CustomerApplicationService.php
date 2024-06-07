@@ -10,6 +10,7 @@ namespace victor\training\onion\application\service;
 
 
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Routing\Annotation\Route;
 use victor\training\onion\application\dto\CustomerDto;
 use victor\training\onion\application\dto\CustomerSearchCriteria;
 use victor\training\onion\application\dto\CustomerSearchResult;
@@ -19,7 +20,7 @@ use victor\training\onion\domain\repo\CustomerRepo;
 use victor\training\onion\domain\service\CustomerRegistrationService;
 use victor\training\onion\domain\service\InsuranceService;
 
-class CustomerApplicationService
+class CustomerApplicationService /*implements CustomerApplicationServiceInterface*/
 {
 
     public function __construct(
@@ -60,13 +61,12 @@ class CustomerApplicationService
         return $dto;
     }
 
-
+    #[Route("/customer/register")]
+//    #[Operation(summary: "Register a new customer")]
     function registerCustomer(CustomerDto $customerDto): CustomerDto
     {
         $customer = $customerDto->toEntity();
-//        $customer = Customer::fromDto($customerDto);// nu mai e Domain agnostic la exterior
         $this->customerRegistrationService->register($customer);
-
         $this->insuranceService->requoteCustomer($customer);
     }
 

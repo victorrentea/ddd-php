@@ -3,6 +3,7 @@
 namespace victor\training\onion\domain\service;
 
 use Exception;
+use victor\training\onion\domain\model\Company;
 use victor\training\onion\infra\onrc\ONRCApiClient;
 
 readonly class CompanyService
@@ -19,36 +20,33 @@ readonly class CompanyService
         }
 
         $onrcle = $list[0];
-
-        $this->deepDomainLogic($onrcle);
+        $company = new Company(
+            $onrcle["mainEml"], // ⚠️ bad attribute name
+            $onrcle["registrationDate"]?->format('Y'), // ⚠️ what if date is null?
+            $onrcle["extendedFullName"] ?? $onrcle["shortName"], // ⚠️ data mapping mixed with biz logic
+            $onrcle["euregno"] ?? "RO" . $onrcle["onrcId"] // ⚠️ mutability risks
+        );
+        $this->deepDomainLogic($company);
     }
 
-    private function deepDomainLogic(array $dto) // ⚠️ useless fields
+    private function deepDomainLogic(Company $company)
     {
-        echo "send 'Thank you' email to " . $dto["mainEml"];  // ⚠️ bad attribute name
+        echo "send 'Thank you' email to " . $company->email;
 
-        $year = $dto["registrationDate"]->format('Y');  // ⚠️ what if date is null?
-        if (date('Y') - $year < 2) {
+        // biz logic sfant 🧘☯️
+        if (date('Y') - $company->registrationYear < 2) {
             throw new Exception("Too young");
         }
+        // biz logic sfant 🧘☯️
 
-        $this->innocentHack($dto);
-        $this->deeper($dto);
-
-        $name = $dto["extendedFullName"] != null ? $dto["extendedFullName"] : $dto["shortName"]; // ⚠️ data mapping mixed with biz logic
-        echo "set order placed by $name";
+        $this->deeper($company);
+        // biz logic sfant 🧘☯️
+        echo "set order placed by {$company->name}";
     }
 
-    private function innocentHack(array &$dto): void
+    private function deeper(Company $company) // ⚠️ useless fields
     {
-        if ($dto["euregno"] == null) {
-            $dto["euregno"]="RO" . $dto["onrcId"]; // ⚠️ mutability risks
-        }
-    }
-
-    private function deeper(array $dto) // ⚠️ useless fields
-    {
-        $name = $dto["extendedFullName"] != null ? $dto["extendedFullName"] : $dto["shortName"]; // ⚠️ repeated logic
-        echo "set shipped to $name, having EU reg: " . $dto["euregno"];
+        $name = $company->name;
+        echo "set shipped to $name, having EU reg: " . $company->euRegistrationNumber;
     }
 }
