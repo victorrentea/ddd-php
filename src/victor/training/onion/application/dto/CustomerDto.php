@@ -3,9 +3,16 @@
 namespace victor\training\onion\application\dto;
 
 // JSON
+use victor\training\onion\application\service\CustomerApplicationService;
+use victor\training\onion\domain\model\Customer;
+use victor\training\onion\domain\model\ShippingAddress;
+
 class CustomerDto
 {
+//    #[Assert\NotNull]
     private string $name;
+//    #[Assert\Email]
+//    #[Assert\NotNull]
     private string $email;
     private string $address;
     private string $shippingAddressCity;
@@ -76,6 +83,16 @@ class CustomerDto
     {
         $this->shippingAddressZip = $shippingAddressZip;
         return $this;
+    }
+
+    public function toEntity(): Customer
+    {
+        $customer = new Customer();
+        $customer->setName($this->getName());
+        $customer->setEmail($this->getEmail());
+        $customer->setAddress($this->getAddress());
+        $customer->setShippingAddress(new ShippingAddress($this->getShippingAddressCity(), $this->getShippingAddressStreet(), $this->getShippingAddressZip()));
+        return $customer;
     }
 
 

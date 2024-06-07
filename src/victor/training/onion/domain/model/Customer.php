@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping\Id;
 use victor\training\onion\application\service\CustomerApplicationService;
 
 #[Entity]
+class CustomerDoctrineEntity {/*toate campurile ctrl-c/ctrl-v*/}
+
 class Customer
 {
     #[Id]

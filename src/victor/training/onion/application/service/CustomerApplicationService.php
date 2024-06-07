@@ -16,19 +16,18 @@ use victor\training\onion\application\dto\CustomerSearchResult;
 use victor\training\onion\domain\model\Customer;
 use victor\training\onion\domain\model\ShippingAddress;
 use victor\training\onion\domain\repo\CustomerRepo;
+use victor\training\onion\domain\service\CustomerRegistrationService;
 use victor\training\onion\domain\service\InsuranceService;
 
 class CustomerApplicationService
 {
-    private CustomerRepo $customerRepository;
-    private InsuranceService $insuranceService;
-    private EntityManager $entityManager;
 
-    public function __construct(CustomerRepo $customerRepository, InsuranceService $insuranceService, \Doctrine\ORM\EntityManager $entityManager)
+    public function __construct(
+        private CustomerRepo $customerRepository,
+        private InsuranceService $insuranceService,
+        private CustomerRegistrationService $customerRegistrationService,
+        private \Doctrine\ORM\EntityManager $entityManager)
     {
-        $this->customerRepository = $customerRepository;
-        $this->insuranceService = $insuranceService;
-        $this->entityManager = $entityManager;
     }
 
     /** @return CustomerSearchResult[] */
@@ -64,27 +63,12 @@ class CustomerApplicationService
 
     function registerCustomer(CustomerDto $customerDto): CustomerDto
     {
-        $customer = new Customer();
-        $customer->setName($customerDto->getName());
-        $customer->setEmail($customerDto->getEmail());
-        $customer->setAddress($customerDto->getAddress());
-        $customer->setShippingAddress(new ShippingAddress($customerDto->getShippingAddressCity(), $customerDto->getShippingAddressStreet(), $customerDto->getShippingAddressZip()));
-
-        if (! $customer->getEmail()) {
-            throw new \Exception("Bum");
-        }
-
-        // business logic
-        // business logic
-        // business logic
-        // business logic
-        $discountPercentage = $customer->getDiscount();
-        echo "Biz logic with $discountPercentage";
-        // business logic
-        // business logic
-        // business logic
+        $customer = $customerDto->toEntity();
+//        $customer = Customer::fromDto($customerDto);// nu mai e Domain agnostic la exterior
+        $this->customerRegistrationService->register($customer);
 
         $this->insuranceService->requoteCustomer($customer);
     }
+
 
 }
