@@ -10,7 +10,7 @@ use function date;
 readonly class CompanyService
 {
     public function __construct(
-        private readonly AnafApiAdapterInterface $apiAdapter)
+        private readonly CompanyFetcherInterface $apiAdapter)
     {
     }
 

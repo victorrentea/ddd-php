@@ -4,7 +4,7 @@ namespace victor\training\onion\domain\service;
 
 use victor\training\onion\domain\model\Company;
 
-interface AnafApiAdapterInterface
+interface CompanyFetcherInterface
 {
     public function fetchCompanyByCif(string $cif): Company;
 }
