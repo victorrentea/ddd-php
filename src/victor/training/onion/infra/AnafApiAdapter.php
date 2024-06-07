@@ -4,9 +4,10 @@ namespace victor\training\onion\infra;
 
 use Exception;
 use victor\training\onion\domain\model\Company;
+use victor\training\onion\domain\service\AnafApiAdapterInterface;
 use victor\training\onion\infra\onrc\ONRCApiClient;
 
-class AnafApiAdapter
+class AnafApiAdapter implements AnafApiAdapterInterface
 {
     public function __construct(
         private ONRCApiClient $apiClient

@@ -5,12 +5,12 @@ namespace victor\training\onion\domain\service;
 use Exception;
 use victor\training\onion\domain\model\Company;
 use victor\training\onion\infra\AnafApiAdapter;
-use victor\training\onion\infra\onrc\ONRCApiClient;
 use function date;
 
 readonly class CompanyService
 {
-    public function __construct(private readonly AnafApiAdapter $apiAdapter)
+    public function __construct(
+        private readonly AnafApiAdapterInterface $apiAdapter)
     {
     }
 
