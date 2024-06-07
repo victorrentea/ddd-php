@@ -3,7 +3,7 @@
 namespace victor\training\modulith\inventory\app;
 
 use Doctrine\ORM\EntityManager;
-use victor\training\modulith\shared\LineItem;
+use victor\training\modulith\common\LineItem;
 
 class StockService
 {

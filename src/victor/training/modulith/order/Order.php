@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\OneToMany;
 use SebastianBergmann\Diff\Line;
-use victor\training\modulith\shared\LineItem;
+use victor\training\modulith\common\LineItem;
 
 #[Entity]
 class Order

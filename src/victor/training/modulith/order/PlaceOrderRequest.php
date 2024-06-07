@@ -2,7 +2,7 @@
 
 namespace victor\training\modulith\order;
 
-use victor\training\modulith\shared\LineItem;
+use victor\training\modulith\common\LineItem;
 
 class PlaceOrderRequest
 {

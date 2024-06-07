@@ -8,10 +8,20 @@ class GetProductResponse
     private string $name;
     private string $description;
     private float $price;
-//    private int $stock; // TODO display stock in product page UI
+    private int $stock; // TODO display stock in product page UI
 
     private float $stars;
 
+    public function getStock(): int
+    {
+        return $this->stock;
+    }
+
+    public function setStock(int $stock): GetProductResponse
+    {
+        $this->stock = $stock;
+        return $this;
+    }
     public function getId(): int
     {
         return $this->id;

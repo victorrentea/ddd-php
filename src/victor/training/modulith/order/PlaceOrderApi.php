@@ -5,9 +5,8 @@ namespace victor\training\modulith\order;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use victor\training\modulith\catalog\in\internal\CatalogInternalApi;
-use victor\training\modulith\catalog\in\internal\CatalogInternalApiInterface;
-use victor\training\modulith\inventory\InventoryInternalApi;
+use victor\training\modulith\catalog\in\rest\internal\CatalogInternalApiInterface;
+use victor\training\modulith\inventory\interapi\InventoryInternalApi;
 use victor\training\modulith\shipping\ShippingResultEvent;
 
 class PlaceOrderApi

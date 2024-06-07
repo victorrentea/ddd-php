@@ -1,9 +1,8 @@
 <?php
 
-namespace victor\training\modulith\catalog\in\internal;
+namespace victor\training\modulith\catalog\in\rest\internal;
 
 use Doctrine\ORM\EntityManager;
-use victor\training\ddd\agile\ProductRepo;
 use victor\training\modulith\catalog\app\Product;
 
 class CatalogInternalApi implements CatalogInternalApiInterface

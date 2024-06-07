@@ -1,6 +1,6 @@
 <?php
 
-namespace victor\training\modulith\catalog\in\internal;
+namespace victor\training\modulith\catalog\in\rest\internal;
 
 interface CatalogInternalApiInterface
 {

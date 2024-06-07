@@ -1,6 +1,6 @@
 <?php
 
-namespace victor\training\modulith\shared;
+namespace victor\training\modulith\common;
 
 class LineItem
 {
