@@ -3,11 +3,16 @@
 namespace victor\training\modulith\inventory\app;
 
 use Doctrine\ORM\EntityManager;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use victor\training\modulith\common\LineItem;
+use victor\training\modulith\inventory\interapi\StockUpdatedEvent;
 
 class StockService
 {
-    public function __construct(private EntityManager $entityManager)
+    public function __construct(
+        private EntityManager $entityManager,
+        private EventDispatcherInterface $eventDispatcher
+    )
     {
     }
 
@@ -37,6 +42,11 @@ class StockService
     {
         $stock = $this->entityManager->getRepository(Stock::class)->findOneBy(['productId' => $productId]);
         $stock->remove($count);
+        // WARNING: NU PUNE EVENTURI DECAT PESTE MARGINI PE CARE PLANUESTI (ai deja buget)
+        // SA LE DECUPLEZI IN DEPLOYMENT SEPARATE
+        $this->eventDispatcher->dispatch(new StockUpdatedEvent($productId, $stock->getItems()));
+        //dupa 2 sprinturi dupa ce-ai pus in prod, schimbi cu
+//        kafka/rabbit.send(
         $this->entityManager->persist($stock);
     }
 

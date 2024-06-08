@@ -28,6 +28,9 @@ class Product
     ]
     private $reviews;
 
+    public bool $inStock;
+
+
     public function __construct()
     {
         $this->reviews = new \Doctrine\Common\Collections\ArrayCollection();

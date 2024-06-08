@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping\Id;
 #[Entity]
 class Stock
 {
-    // id, productId, items
+    // ui, productId, items
     #[Id]
     #[GeneratedValue]
     private int $id;
